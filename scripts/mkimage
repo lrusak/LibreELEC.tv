@@ -212,6 +212,10 @@ elif [ "$BOOTLOADER" = "u-boot" ]; then
     elif [ -f "$RELEASE_DIR/3rdparty/bootloader/u-boot-fuse" ]; then
      # allow custom dd script for vendor specific fusing
       . $RELEASE_DIR/3rdparty/bootloader/u-boot-fuse
+    elif [ -f "$RELEASE_DIR/3rdparty/bootloader/u-boot" ]; then
+      dd if="$RELEASE_DIR/3rdparty/bootloader/bl1" of="$DISK" conv=fsync,notrunc bs=1 count=442 >"$SAVE_ERROR" 2>&1 || show_error
+      dd if="$RELEASE_DIR/3rdparty/bootloader/bl1" of="$DISK" conv=fsync,notrunc bs=512 skip=1 seek=1 >"$SAVE_ERROR" 2>&1 || show_error
+      dd if="$RELEASE_DIR/3rdparty/bootloader/u-boot" of="$DISK" conv=fsync,notrunc bs=512 seek=97 >"$SAVE_ERROR" 2>&1 || show_error
     fi
 
     echo "image: copying files to part1..."
@@ -219,6 +223,10 @@ elif [ "$BOOTLOADER" = "u-boot" ]; then
     mcopy $TARGET_IMG/$IMAGE_NAME.system ::/SYSTEM
     mcopy $RELEASE_DIR/target/KERNEL.md5 "::/$KERNEL_NAME.md5"
     mcopy $RELEASE_DIR/target/SYSTEM.md5 ::/SYSTEM.md5
+
+    if [ -f "$RELEASE_DIR/target/INITRD" ]; then
+      cp $RELEASE_DIR/target/INITRD "$OE_TMP/INITRD"
+    fi
 
     if [ -n "$UBOOT_SYSTEM" -a -f "$RELEASE_DIR/3rdparty/bootloader/u-boot-$UBOOT_SYSTEM.img" ]; then
       mcopy "$RELEASE_DIR/3rdparty/bootloader/u-boot-$UBOOT_SYSTEM.img" ::/u-boot.img
