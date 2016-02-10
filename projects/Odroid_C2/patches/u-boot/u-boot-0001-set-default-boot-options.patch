@@ -1,0 +1,90 @@
+--- a/include/configs/odroidc2.h	2016-04-06 23:25:06.000000000 -0700
++++ b/include/configs/odroidc2.h	2016-04-09 10:12:50.783013177 -0700
+@@ -72,9 +72,11 @@
+ #define CONFIG_AML_MESON_SERIAL		1
+ #define CONFIG_SERIAL_MULTI		1
+ 
+-#define CONFIG_BOOTDELAY		1	// Seconds
++#define CONFIG_BOOTDELAY		0	// Seconds
++#define CONFIG_ZERO_BOOTDELAY_CHECK
+ #define CONFIG_ABORTBOOT_WITH_ENTERKEY
+ 
++
+ /* args/envs */
+ #define CONFIG_SYS_MAXARGS		64
+ 
+@@ -83,32 +85,25 @@
+ 	"loadaddr=0x20000000\0"		\
+ 	"dtbaddr=0x1000000\0"		\
+ 	"fdt_high=0x20000000\0"		\
+-	"hdmimode=720p60hz\0"		\
+-	"cecconfig=cec0xf\0"		\
+-	"bootargs=root=/dev/mmcblk0p2 rw init=/init rootwait "	\
+-		"console=ttyS0,115200 "				\
+-		"hdmimode=720p60hz hdmitx=cecf "		\
+-		"logo=osd1,loaded,0x3f800000,720p60hz "		\
+-		"androidboot.hardware=odroidc2 androidboot.serialno=${fbt_id#} "	\
+-		"androidboot.selinux=disabled  \0"		\
+-	"bootcmd=cfgload; showlogo ${hdmimode}; movi read dtb 0 ${dtbaddr}; movi read boot 0 ${loadaddr}; booti ${loadaddr} - ${dtbaddr}\0"
++	"verify=no\0"			\
++	"bootcmd=cfgload\0"
+ 
+ #define CONFIG_PREBOOT
+ #define CONFIG_BOOTCOMMAND
+ 
+-//#define CONFIG_ENV_IS_NOWHERE  1
++#define CONFIG_ENV_IS_NOWHERE  1
+ #define CONFIG_ENV_SIZE			(32 * SZ_1K)	/* 32kB */
+ #define CONFIG_ENV_OFFSET		(720 * SZ_1K)	/* FIXME: should be
+ 							   close to U-boot image
+ 							   size to save space */
+ #define CONFIG_FIT			1
+ #define CONFIG_OF_LIBFDT		1
+-#define CONFIG_ANDROID_BOOT_IMAGE	1
+-#define CONFIG_ANDROID_IMG		1
++//#define CONFIG_ANDROID_BOOT_IMAGE	1
++//#define CONFIG_ANDROID_IMG		1
+ #define CONFIG_SYS_BOOTM_LEN		(64 << 20) /* Increase max gunzip size*/
+ 
+ /* Support commands */
+-#define CONFIG_CMD_SAVEENV		1
++//#define CONFIG_CMD_SAVEENV		1
+ #define CONFIG_CMD_CACHE		1
+ #define CONFIG_CMD_BOOTI		1
+ #define CONFIG_CMD_EFUSE		1
+@@ -116,19 +111,19 @@
+ #define CONFIG_CMD_MEMORY		1
+ #define CONFIG_CMD_FAT			1
+ #define CONFIG_CMD_EXT4			1
+-#define CONFIG_CMD_GPIO			1
++//#define CONFIG_CMD_GPIO			1
+ #define CONFIG_CMD_RUN			1
+ #define CONFIG_CMD_REBOOT		1
+ #define CONFIG_CMD_ECHO			1
+-#define CONFIG_CMD_JTAG			1
++//#define CONFIG_CMD_JTAG			1
+ #define CONFIG_CMD_AUTOSCRIPT		1
+ #define CONFIG_CMD_BMP			1
+ #define CONFIG_CMD_USB			1
+-#define CONFIG_CMD_NET			1
+-#define CONFIG_CMD_MISC			1
++//#define CONFIG_CMD_NET			1
++//#define CONFIG_CMD_MISC			1
+ #define CONFIG_CMD_ITEST		1
+ #define CONFIG_CMD_CPU_TEMP		1
+-#define CONFIG_CMD_MEMTEST		1
++//#define CONFIG_CMD_MEMTEST		1
+ #define CONFIG_CMD_USB_MASS_STORAGE	1
+ #define CONFIG_CMD_FASTBOOT		1
+ #define CONFIG_CMD_INI			1
+@@ -176,8 +171,8 @@
+ #define CONFIG_LZO			1
+ 
+ /* storage: emmc/nand/sd */
+-#define CONFIG_ENV_OVERWRITE
+-#define CONFIG_ENV_IS_IN_MMC		1
++//#define CONFIG_ENV_OVERWRITE
++#define CONFIG_ENV_IS_IN_MMC		0
+ #define CONFIG_SYS_MMC_ENV_DEV		0
+ #define CONFIG_AML_SD_EMMC		1
+ 
