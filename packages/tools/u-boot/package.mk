@@ -30,6 +30,10 @@ elif [ "$UBOOT_VERSION" = "hardkernel" ]; then
   PKG_VERSION="hardkernel-502b13b"
   PKG_SITE="https://github.com/hardkernel/u-boot"
   PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
+elif [ "$UBOOT_VERSION" = "hardkernel" ]; then
+  PKG_VERSION="hardkernel-5785ef8"
+  PKG_SITE="https://github.com/hardkernel/u-boot"
+  PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
 else
   exit 0
 fi
