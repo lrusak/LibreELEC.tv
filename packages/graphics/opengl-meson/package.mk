@@ -16,12 +16,22 @@
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="opengl-meson8"
-PKG_VERSION="r5p1-01rel0-armhf"
+PKG_NAME="opengl-meson"
 PKG_REV="1"
-PKG_ARCH="arm"
+PKG_ARCH="arm aarch64"
 PKG_LICENSE="nonfree"
 PKG_SITE="http://openlinux.amlogic.com:8000/download/ARM/filesystem/"
+case $PROJECT in
+  WeTek_Core)
+    PKG_VERSION="8-r5p1-01rel0-armhf"
+    ;;
+  WeTek_Play)
+    PKG_VERSION="6-r5p1-01rel0-armhf"
+    ;;
+  Odroid_C2)
+    PKG_VERSION="gxbb-r5p1-01rel0"
+    ;;
+esac
 PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
@@ -41,10 +51,34 @@ makeinstall_target() {
     cp -PR usr/include/* $SYSROOT_PREFIX/usr/include
 
   mkdir -p $SYSROOT_PREFIX/usr/lib
-    cp -PR usr/lib/*.so* $SYSROOT_PREFIX/usr/lib
+    cp -PR usr/lib/libMali.so $SYSROOT_PREFIX/usr/lib
+
+    ln -sf libMali.so $SYSROOT_PREFIX/usr/lib/libEGL.so.1.4
+    ln -sf libEGL.so.1.4 $SYSROOT_PREFIX/usr/lib/libEGL.so.1
+    ln -sf libEGL.so.1 $SYSROOT_PREFIX/usr/lib/libEGL.so
+
+    ln -sf libMali.so $SYSROOT_PREFIX/usr/lib/libGLESv1_CM.so.1.1
+    ln -sf libGLESv1_CM.so.1.1 $SYSROOT_PREFIX/usr/lib/libGLESv1_CM.so.1
+    ln -sf libGLESv1_CM.so.1 $SYSROOT_PREFIX/usr/lib/libGLESv1_CM.so
+
+    ln -sf libMali.so $SYSROOT_PREFIX/usr/lib/libGLESv2.so.2.0
+    ln -sf libGLESv2.so.2.0 $SYSROOT_PREFIX/usr/lib/libGLESv2.so.2
+    ln -sf libGLESv2.so.2 $SYSROOT_PREFIX/usr/lib/libGLESv2.so
 
   mkdir -p $INSTALL/usr/lib
-    cp -PR usr/lib/*.so* $INSTALL/usr/lib
+    cp -PR usr/lib/libMali.so $INSTALL/usr/lib
+
+    ln -sf libMali.so $INSTALL/usr/lib/libEGL.so.1.4
+    ln -sf libEGL.so.1.4 $INSTALL/usr/lib/libEGL.so.1
+    ln -sf libEGL.so.1 $INSTALL/usr/lib/libEGL.so
+
+    ln -sf libMali.so $INSTALL/usr/lib/libGLESv1_CM.so.1.1
+    ln -sf libGLESv1_CM.so.1.1 $INSTALL/usr/lib/libGLESv1_CM.so.1
+    ln -sf libGLESv1_CM.so.1 $INSTALL/usr/lib/libGLESv1_CM.so
+
+    ln -sf libMali.so $INSTALL/usr/lib/libGLESv2.so.2.0
+    ln -sf libGLESv2.so.2.0 $INSTALL/usr/lib/libGLESv2.so.2
+    ln -sf libGLESv2.so.2 $INSTALL/usr/lib/libGLESv2.so
 }
 
 post_install() {
