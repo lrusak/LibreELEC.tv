@@ -26,11 +26,15 @@ elif [ "$UBOOT_VERSION" = "imx6-cuboxi" ]; then
   PKG_SITE="http://imx.solid-run.com/wiki/index.php?title=Building_the_kernel_and_u-boot_for_the_CuBox-i_and_the_HummingBoard"
   # https://github.com/SolidRun/u-boot-imx6.git
   PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
+elif [ "$UBOOT_VERSION" = "hardkernel" ]; then
+  PKG_VERSION="hardkernel-502b13b"
+  PKG_SITE="https://github.com/hardkernel/u-boot"
+  PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
 else
   exit 0
 fi
 PKG_REV="1"
-PKG_ARCH="arm"
+PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPL"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
@@ -65,9 +69,9 @@ make_target() {
   done
 
   for UBOOT_TARGET in $UBOOT_CONFIG; do
-    make CROSS_COMPILE="$TARGET_PREFIX" ARCH="$TARGET_ARCH" mrproper
-    make CROSS_COMPILE="$TARGET_PREFIX" ARCH="$TARGET_ARCH" $UBOOT_TARGET
-    make CROSS_COMPILE="$TARGET_PREFIX" ARCH="$TARGET_ARCH" HOSTCC="$HOST_CC" HOSTSTRIP="true"
+    make CROSS_COMPILE="$TARGET_PREFIX" ARCH=arm mrproper
+    make CROSS_COMPILE="$TARGET_PREFIX" ARCH=arm $UBOOT_TARGET
+    make CROSS_COMPILE="$TARGET_PREFIX" ARCH=arm HOSTCC="$HOST_CC" HOSTSTRIP="true"
 
     # rename files in case of multiple targets
     if [ $UBOOT_TARGET_CNT -gt 1 ]; then
@@ -110,13 +114,22 @@ makeinstall_target() {
 
   mkdir -p $INSTALL/usr/share/bootloader
 
-  cp ./u-boot*.imx $INSTALL/usr/share/bootloader 2>/dev/null || :
-  cp ./u-boot*.img $INSTALL/usr/share/bootloader 2>/dev/null || :
-  cp ./SPL* $INSTALL/usr/share/bootloader 2>/dev/null || :
+  cp $ROOT/$PKG_BUILD/u-boot*.imx $INSTALL/usr/share/bootloader 2>/dev/null || :
+  cp $ROOT/$PKG_BUILD/u-boot*.img $INSTALL/usr/share/bootloader 2>/dev/null || :
+  cp $ROOT/$PKG_BUILD/SPL* $INSTALL/usr/share/bootloader 2>/dev/null || :
 
-  cp ./$UBOOT_CONFIGFILE $INSTALL/usr/share/bootloader 2>/dev/null || :
-
-  cp -PRv $PKG_DIR/scripts/update.sh $INSTALL/usr/share/bootloader
+  cp $ROOT/$PKG_BUILD/$UBOOT_CONFIGFILE $INSTALL/usr/share/bootloader 2>/dev/null || :
 
   cp -PR $PROJECT_DIR/$PROJECT/bootloader/uEnv*.txt $INSTALL/usr/share/bootloader 2>/dev/null || :
+
+  case $PROJECT in
+    Odroid_C2)
+      cp -PRv $PKG_DIR/scripts/update-c2.sh $INSTALL/usr/share/bootloader/update.sh
+      cp -PRv $ROOT/$PKG_BUILD/sd_fuse/bl1.bin.hardkernel $INSTALL/usr/share/bootloader/bl1
+      cp -PRv $ROOT/$PKG_BUILD/sd_fuse/u-boot.bin $INSTALL/usr/share/bootloader/u-boot
+      ;;
+    imx6)
+      cp -PRv $PKG_DIR/scripts/update.sh $INSTALL/usr/share/bootloader
+      ;;
+  esac
 }
