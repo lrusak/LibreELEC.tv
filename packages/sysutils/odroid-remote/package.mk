@@ -16,34 +16,39 @@
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="remote"
-PKG_VERSION="1"
+PKG_NAME="odroid-remote"
+PKG_VERSION="00b09c9"
 PKG_REV="1"
-PKG_ARCH="any"
-PKG_LICENSE="GPL"
-PKG_SITE="http://www.openelec.tv"
-PKG_URL=""
-PKG_DEPENDS_TARGET="toolchain eventlircd v4l-utils"
+PKG_ARCH="arm aarch64"
+PKG_LICENSE="other"
+PKG_SITE="http://www.amlogic.com"
+PKG_URL="https://github.com/mdrjr/c1_irremote/archive/$PKG_VERSION.tar.gz"
+PKG_SOURCE_DIR="c1_irremote-$PKG_VERSION*"
+PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
-PKG_SECTION="virtual"
-PKG_SHORTDESC="remote: Meta package for installing various tools needed for remote support"
-PKG_LONGDESC="Meta package for installing various tools needed for remote support"
+PKG_SECTION="sysutils/remote"
+PKG_SHORTDESC="odroid-remote - IR remote configuration utility for odroid-based devices"
+PKG_LONGDESC="odroid-remote - IR remote configuration utility for odroid-based devices"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-if [ "$ATVCLIENT_SUPPORT" = "yes" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET atvclient"
-fi
+make_target() {
+  $CC $CFLAGS -c -o irremote.o irremote.c
+  $CC $CFLAGS -c -o config.o config.c
+  $CC $CFLAGS -c -o parsefile.o parsefile.c
 
-if [ "$IRSERVER_SUPPORT" = "yes" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET irserver"
-fi
+  $CC $LDFLAGS -o odroid_remote irremote.o config.o parsefile.o
+}
 
-if [ "$AMREMOTE_SUPPORT" = "yes" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET amremote"
-fi
+makeinstall_target() {
+  mkdir -p $INSTALL/usr/bin
+    cp odroid_remote $INSTALL/usr/bin/
 
-if [ "$ODROIDREMOTE_SUPPORT" = "yes" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET odroid-remote"
-fi
+  mkdir -p $INSTALL/etc/odroid-remote
+    cp odroid_remote.conf $INSTALL/etc/odroid-remote/
+}
+
+post_install() {
+  enable_service odroid-remote.service
+}

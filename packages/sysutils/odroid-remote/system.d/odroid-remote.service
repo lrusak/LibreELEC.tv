@@ -1,0 +1,10 @@
+[Unit]
+Description=ODROID Remote Control Setup
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/odroid_remote /etc/odroid-remote/odroid_remote.conf
+
+[Install]
+WantedBy=multi-user.target
