@@ -1,0 +1,22 @@
+diff --git a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp b/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
+index 2103f0b..7612724 100644
+--- a/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
++++ b/xbmc/windowing/egl/EGLNativeTypeAmlogic.cpp
+@@ -56,7 +56,13 @@ bool CEGLNativeTypeAmlogic::CheckCompatibility()
+ 
+   SysfsUtils::GetString(modalias, name);
+   StringUtils::Trim(name);
+-  if (name == "platform:mesonfb")
++  std::vector<std::string> mesonfb;
++
++  // Checking for old kernels and new 3.14 (meson-fb)
++  mesonfb.push_back("platform:mesonfb");
++  mesonfb.push_back("meson-fb");
++
++  if (StringUtils::ContainsKeyword(name, mesonfb))
+     return true;
+   return false;
+ }
+-- 
+1.7.10.4
+

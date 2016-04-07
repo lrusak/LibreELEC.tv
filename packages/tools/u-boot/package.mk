@@ -27,7 +27,7 @@ elif [ "$UBOOT_VERSION" = "imx6-cuboxi" ]; then
   # https://github.com/SolidRun/u-boot-imx6.git
   PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
 elif [ "$UBOOT_VERSION" = "hardkernel" ]; then
-  PKG_VERSION="hardkernel-502b13b"
+  PKG_VERSION="hardkernel-5785ef8"
   PKG_SITE="https://github.com/hardkernel/u-boot"
   PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
 else
@@ -69,16 +69,9 @@ make_target() {
   done
 
   for UBOOT_TARGET in $UBOOT_CONFIG; do
-    if [ "$PROJECT" != "Odroid_C2" ]; then
       make CROSS_COMPILE="$TARGET_PREFIX" ARCH=arm mrproper
       make CROSS_COMPILE="$TARGET_PREFIX" ARCH=arm $UBOOT_TARGET
       make CROSS_COMPILE="$TARGET_PREFIX" ARCH=arm HOSTCC="$HOST_CC" HOSTSTRIP="true"
-    else
-      export PATH=$ROOT/$TOOLCHAIN/lib/gcc-linaro-aarch64-none-elf/bin/:$PATH
-      make CROSS_COMPILE=aarch64-none-elf- ARCH=arm mrproper
-      make CROSS_COMPILE=aarch64-none-elf- ARCH=arm $UBOOT_TARGET
-      make CROSS_COMPILE=aarch64-none-elf- ARCH=arm HOSTCC="$HOST_CC" HOSTSTRIP="true"
-    fi
 
     # rename files in case of multiple targets
     if [ $UBOOT_TARGET_CNT -gt 1 ]; then

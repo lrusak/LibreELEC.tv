@@ -1,0 +1,46 @@
+diff --git a/xbmc/utils/CPUInfo.cpp b/xbmc/utils/CPUInfo.cpp
+index 660d355..b163055 100644
+--- a/xbmc/utils/CPUInfo.cpp
++++ b/xbmc/utils/CPUInfo.cpp
+@@ -18,6 +18,7 @@
+  *
+  */
+ 
++#include "system.h"
+ #include <cstdlib>
+ 
+ #include "CPUInfo.h"
+@@ -97,6 +98,10 @@
+ #include "settings/AdvancedSettings.h"
+ #endif
+ 
++#ifdef HAS_LIBAMCODEC
++#include "utils/AMLUtils.h"
++#endif
++
+ #include "utils/StringUtils.h"
+ 
+ // In milliseconds
+@@ -255,7 +260,9 @@ CCPUInfo::CCPUInfo(void)
+   }
+ #else
+   m_fProcStat = fopen("/proc/stat", "r");
+-  m_fProcTemperature = fopen("/proc/acpi/thermal_zone/THM0/temperature", "r");
++    m_fProcTemperature = fopen("/sys/class/hwmon/hwmon0/temp1_input", "r");
++  if (m_fProcTemperature == NULL)
++    m_fProcTemperature = fopen("/proc/acpi/thermal_zone/THM0/temperature", "r");
+   if (m_fProcTemperature == NULL)
+     m_fProcTemperature = fopen("/proc/acpi/thermal_zone/THRM/temperature", "r");
+   if (m_fProcTemperature == NULL)
+@@ -609,7 +616,10 @@ bool CCPUInfo::getTemperature(CTemperature& temperature)
+     if (!ret)
+     {
+       ret = fscanf(m_fProcTemperature, "%d", &value);
+-      value = value / 1000;
++#ifndef HAS_LIBAMCODEC
++      if (!aml_present())
++        value = value / 1000;
++#endif
+       scale = 'c';
+       ret++;
+     }
