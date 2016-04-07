@@ -1,0 +1,217 @@
+diff --git a/addons/resource.language.en_gb/resources/strings.po b/addons/resource.language.en_gb/resources/strings.po
+index 6828cfd..8e9e906 100644
+--- a/addons/resource.language.en_gb/resources/strings.po
++++ b/addons/resource.language.en_gb/resources/strings.po
+@@ -16600,6 +16600,41 @@ msgctxt "#37045"
+ msgid "Extract chapter thumbnails for presentation in the chapters / bookmarks dialogue. This might increase CPU load."
+ msgstr ""
+ 
++#: system/settings/settings.xml
++msgctxt "#60001"
++msgid "Use software decoding for SD video content"
++msgstr ""
++
++#: system/settings/settings.xml
++msgctxt "#60002"
++msgid "Use software decoding for Standard Definition video content (< 720p)"
++msgstr ""
++
++#: system/settings/settings.xml
++msgctxt "#60003"
++msgid "Use software decoding for MPEG2 (SD) video content"
++msgstr ""
++
++#: system/settings/settings.xml
++msgctxt "#60004"
++msgid "Use software decoding for H.264 (SD) video content"
++msgstr ""
++
++#: system/settings/settings.xml
++msgctxt "#60005"
++msgid "Use software decoding for MPEG4 (SD) video content"
++msgstr ""
++
++#: system/settings/settings.xml
++msgctxt "#60006"
++msgid "Use software decoding for VC1 (SD) video content"
++msgstr ""
++
++#: system/settings/settings.xml
++msgctxt "#60007"
++msgid "Use software decoding for WMV3 (SD) video content"
++msgstr ""
++
+ #empty strings from id 37046 to 38009
+ 
+ #: system/settings/rbp.xml
+diff --git a/system/settings/settings.xml b/system/settings/settings.xml
+index 3ef33e0..df31704 100644
+--- a/system/settings/settings.xml
++++ b/system/settings/settings.xml
+@@ -673,6 +673,81 @@
+           </updates>
+           <control type="toggle" />
+         </setting>
++        <setting id="videoplayer.useammpeg2" type="boolean" parent="videoplayer.useamcodec" label="60003" help="60002">
++          <requirement>HAVE_AMCODEC</requirement>
++          <level>3</level>
++          <default>false</default>
++          <dependencies>
++            <dependency type="enable">
++              <condition setting="videoplayer.useamcodec" operator="is">true</condition>
++            </dependency>
++            <dependency type="visible" on="property" name="codecoptionvisible" setting="videoplayer.useammpeg2" operator="is">true</dependency>
++          </dependencies>
++          <updates>
++            <update type="change" />
++          </updates>
++          <control type="toggle" />
++        </setting>
++        <setting id="videoplayer.useamh264" type="boolean" parent="videoplayer.useamcodec" label="60004" help="60002">
++          <requirement>HAVE_AMCODEC</requirement>
++          <level>3</level>
++          <default>false</default>
++          <dependencies>
++            <dependency type="enable">
++              <condition setting="videoplayer.useamcodec" operator="is">true</condition>
++            </dependency>
++            <dependency type="visible" on="property" name="codecoptionvisible" setting="videoplayer.useamh264" operator="is">true</dependency>
++          </dependencies>
++          <updates>
++            <update type="change" />
++          </updates>
++          <control type="toggle" />
++        </setting>
++        <setting id="videoplayer.useammpeg4" type="boolean" parent="videoplayer.useamcodec" label="60005" help="60002">
++          <requirement>HAVE_AMCODEC</requirement>
++          <level>3</level>
++          <default>false</default>
++          <dependencies>
++            <dependency type="enable">
++              <condition setting="videoplayer.useamcodec" operator="is">true</condition>
++            </dependency>
++            <dependency type="visible" on="property" name="codecoptionvisible" setting="videoplayer.useammpeg4" operator="is">true</dependency>
++          </dependencies>
++          <updates>
++            <update type="change" />
++          </updates>
++          <control type="toggle" />
++        </setting>
++        <setting id="videoplayer.useamvc1" type="boolean" parent="videoplayer.useamcodec" label="60006" help="60002">
++          <requirement>HAVE_AMCODEC</requirement>
++          <level>3</level>
++          <default>false</default>
++          <dependencies>
++            <dependency type="enable">
++              <condition setting="videoplayer.useamcodec" operator="is">true</condition>
++            </dependency>
++            <dependency type="visible" on="property" name="codecoptionvisible" setting="videoplayer.useamvc1" operator="is">true</dependency>
++          </dependencies>
++          <updates>
++            <update type="change" />
++          </updates>
++          <control type="toggle" />
++        </setting>
++        <setting id="videoplayer.useamwmv3" type="boolean" parent="videoplayer.useamcodec" label="60007" help="60002">
++          <requirement>HAVE_AMCODEC</requirement>
++          <level>3</level>
++          <default>false</default>
++          <dependencies>
++            <dependency type="enable">
++              <condition setting="videoplayer.useamcodec" operator="is">true</condition>
++            </dependency>
++            <dependency type="visible" on="property" name="codecoptionvisible" setting="videoplayer.useamwmv3" operator="is">true</dependency>
++          </dependencies>
++          <updates>
++            <update type="change" />
++          </updates>
++          <control type="toggle" />
++        </setting>
+         <setting id="videoplayer.usevdpau" type="boolean" label="13425" help="36155">
+           <requirement>HAVE_LIBVDPAU</requirement>
+           <level>2</level>
+diff --git a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
+index b6d3277..b2ba01c 100644
+--- a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
++++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp
+@@ -24,6 +24,8 @@
+ #include "DVDClock.h"
+ #include "DVDStreamInfo.h"
+ #include "AMLCodec.h"
++#include "settings/Settings.h"
++#include "settings/VideoSettings.h"
+ #include "utils/AMLUtils.h"
+ #include "utils/BitstreamConverter.h"
+ #include "utils/log.h"
+@@ -68,6 +70,12 @@ bool CDVDVideoCodecAmlogic::Open(CDVDStreamInfo &hints, CDVDCodecOptions &option
+ 
+   m_hints = hints;
+ 
++  if (CSettings::GetInstance().GetBool("videoplayer.useamsd") && m_hints.width < 1280)
++     {
++       CLog::Log(LOGDEBUG, "Use Software decoding for SD content");
++        return false;
++     }
++
+   switch(m_hints.codec)
+   {
+     case AV_CODEC_ID_MJPEG:
+@@ -76,6 +84,11 @@ bool CDVDVideoCodecAmlogic::Open(CDVDStreamInfo &hints, CDVDCodecOptions &option
+     case AV_CODEC_ID_MPEG1VIDEO:
+     case AV_CODEC_ID_MPEG2VIDEO:
+     case AV_CODEC_ID_MPEG2VIDEO_XVMC:
++    if (CSettings::GetInstance().GetBool("videoplayer.useammpeg2") && m_hints.width < 1280)
++       {
++         CLog::Log(LOGDEBUG, "Use Software decoding mpeg2 for SD content");
++          return false;
++       }
+       m_mpeg2_sequence_pts = 0;
+       m_mpeg2_sequence = new mpeg2_sequence;
+       m_mpeg2_sequence->width  = m_hints.width;
+@@ -93,6 +106,11 @@ bool CDVDVideoCodecAmlogic::Open(CDVDStreamInfo &hints, CDVDCodecOptions &option
+         // 4K is supported only on Amlogic S802/S812 chip
+         return false;
+       }
++      if (CSettings::GetInstance().GetBool("videoplayer.useamh264") && m_hints.width < 1280)
++         {
++           CLog::Log(LOGDEBUG, "Use Software decoding h264 for SD content");
++            return false;
++         }
+       m_pFormatName = "am-h264";
+       // convert h264-avcC to h264-annex-b as h264-avcC
+       // under streamers can have issues when seeking.
+@@ -112,6 +130,11 @@ bool CDVDVideoCodecAmlogic::Open(CDVDStreamInfo &hints, CDVDCodecOptions &option
+     case AV_CODEC_ID_MPEG4:
+     case AV_CODEC_ID_MSMPEG4V2:
+     case AV_CODEC_ID_MSMPEG4V3:
++    if (CSettings::GetInstance().GetBool("videoplayer.useammpeg4") && m_hints.width < 1280)
++      {
++        CLog::Log(LOGDEBUG, "Use Software decoding mpeg4 for SD content");
++        return false;
++       }
+       m_pFormatName = "am-mpeg4";
+       break;
+     case AV_CODEC_ID_H263:
+@@ -129,9 +152,19 @@ bool CDVDVideoCodecAmlogic::Open(CDVDStreamInfo &hints, CDVDCodecOptions &option
+       return false;
+       break;
+     case AV_CODEC_ID_VC1:
++    if (CSettings::GetInstance().GetBool("videoplayer.useamvc1") && m_hints.width < 1280)
++      {
++        CLog::Log(LOGDEBUG, "Use Software decoding vc1 for SD content");
++        return false;
++       }
+       m_pFormatName = "am-vc1";
+       break;
+     case AV_CODEC_ID_WMV3:
++    if (CSettings::GetInstance().GetBool("videoplayer.useamwmv3") && m_hints.width < 1280)
++      {
++        CLog::Log(LOGDEBUG, "Use Software decoding wmv3 for SD content");
++        return false;
++       }
+       m_pFormatName = "am-wmv3";
+       break;
+     case AV_CODEC_ID_AVS:
+-- 
+1.9.1
+
