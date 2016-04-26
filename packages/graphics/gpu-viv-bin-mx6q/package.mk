@@ -17,26 +17,19 @@
 ################################################################################
 
 PKG_NAME="gpu-viv-bin-mx6q"
-PKG_VERSION="3.10.17-1.0.0-1"
+PKG_VERSION="3.10.17-1.0.2-hfp"
 PKG_REV="1"
 PKG_ARCH="arm"
 PKG_LICENSE="nonfree"
 PKG_SITE="http://www.freescale.com"
 PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain gpu-viv-g2d"
 PKG_PRIORITY="optional"
 PKG_SECTION="graphics"
 PKG_SHORTDESC="gpu-viv-bin-mx6q: OpenGL-ES and VIVANTE driver for imx6q"
 PKG_LONGDESC="gpu-viv-bin-mx6q: OpenGL-ES and VIVANTE driver for imx6q"
-
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
-
-if [ "$TARGET_FLOAT" = "softfp" -o "$TARGET_FLOAT" = "soft" ]; then
-  FLOAT="softfp"
-elif [ "$TARGET_FLOAT" = "hard" ]; then
-  FLOAT="hardfp"
-fi
 
 make_target() {
  : # nothing to make
@@ -44,40 +37,28 @@ make_target() {
 
 makeinstall_target() {
   mkdir -p $SYSROOT_PREFIX/usr/include
-    cp -PRv $FLOAT/usr/include/* $SYSROOT_PREFIX/usr/include
+  cp -PRv usr/include/* $SYSROOT_PREFIX/usr/include
+
+  LIBS_COPY="usr/lib/libEGL-fb.so \
+             usr/lib/libEGL.so* \
+             usr/lib/libGLES_CL.so \
+             usr/lib/libGLES_CM.so \
+             usr/lib/libGLESv1_CL.so* \
+             usr/lib/libGLESv1_CM.so* \
+             usr/lib/libGLESv2-fb.so \
+             usr/lib/libGLESv2.so* \
+             usr/lib/libGLSLC.so* \
+             usr/lib/libGAL-fb.so \
+             usr/lib/libGAL.so* \
+             usr/lib/libVIVANTE-fb.so \
+             usr/lib/libVIVANTE.so* \
+             usr/lib/libOpenCL.so"
 
   mkdir -p $SYSROOT_PREFIX/usr/lib
-    cp -PRv $FLOAT/usr/lib/libEGL-fb.so \
-            $FLOAT/usr/lib/libEGL.so* \
-            $FLOAT/usr/lib/libGLES_CL.so \
-            $FLOAT/usr/lib/libGLES_CM.so \
-            $FLOAT/usr/lib/libGLESv1_CL.so* \
-            $FLOAT/usr/lib/libGLESv1_CM.so* \
-            $FLOAT/usr/lib/libGLESv2-fb.so \
-            $FLOAT/usr/lib/libGLESv2.so* \
-            $FLOAT/usr/lib/libGAL-fb.so \
-            $FLOAT/usr/lib/libGAL.so* \
-            $FLOAT/usr/lib/libVIVANTE-fb.so \
-            $FLOAT/usr/lib/libVIVANTE.so* \
-            $FLOAT/usr/lib/libOpenCL.so \
-            $SYSROOT_PREFIX/usr/lib
+  cp -PRv $LIBS_COPY $SYSROOT_PREFIX/usr/lib
 
   mkdir -p $INSTALL/usr/lib
-    cp -PRv $FLOAT/usr/lib/libEGL-fb.so \
-            $FLOAT/usr/lib/libEGL.so* \
-            $FLOAT/usr/lib/libGLES_CL.so \
-            $FLOAT/usr/lib/libGLES_CM.so \
-            $FLOAT/usr/lib/libGLESv1_CL.so* \
-            $FLOAT/usr/lib/libGLESv1_CM.so* \
-            $FLOAT/usr/lib/libGLESv2-fb.so \
-            $FLOAT/usr/lib/libGLESv2.so* \
-            $FLOAT/usr/lib/libGLSLC.so* \
-            $FLOAT/usr/lib/libGAL-fb.so \
-            $FLOAT/usr/lib/libGAL.so* \
-            $FLOAT/usr/lib/libVIVANTE-fb.so \
-            $FLOAT/usr/lib/libVIVANTE.so* \
-            $FLOAT/usr/lib/libOpenCL.so \
-            $INSTALL/usr/lib
+  cp -PRv $LIBS_COPY $INSTALL/usr/lib
 }
 
 post_install() {

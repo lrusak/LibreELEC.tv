@@ -85,10 +85,12 @@ else
   fi
 fi
 
-if [ -n "$PKG_SOURCE_DIR" ]; then
-  mv $BUILD/$PKG_SOURCE_DIR $BUILD/$PKG_NAME-$PKG_VERSION
-elif [ -d $BUILD/$PKG_NAME-$PKG_VERSION* -a ! -d $BUILD/$PKG_NAME-$PKG_VERSION ]; then
-  mv $BUILD/$PKG_NAME-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+if [ ! -d $BUILD/$PKG_NAME-$PKG_VERSION ]; then
+  if [ -n "$PKG_SOURCE_DIR" ]; then
+    mv $BUILD/$PKG_SOURCE_DIR $BUILD/$PKG_NAME-$PKG_VERSION
+  elif [ -d $BUILD/$PKG_NAME-$PKG_VERSION* ]; then
+    mv $BUILD/$PKG_NAME-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+  fi
 fi
 
 if [ -d "$PKG_DIR/sources" ]; then
@@ -119,6 +121,7 @@ for i in $PKG_DIR/patches/$PKG_NAME-*.patch \
          $PKG_DIR/patches/$PKG_VERSION/*.patch \
          $PKG_DIR/patches/$PKG_VERSION/$PATCH_ARCH/*.patch \
          $PROJECT_DIR/$PROJECT/patches/$PKG_NAME/*.patch \
+         $PROJECT_DIR/$PROJECT/patches/$PKG_NAME/$PKG_VERSION/*.patch \
          $HOME/.openelec/patches/$PKG_NAME/*.patch \
          $HOME/.openelec/projects/$PROJECT/patches/$PKG_NAME/*.patch; do
 
@@ -130,6 +133,8 @@ for i in $PKG_DIR/patches/$PKG_NAME-*.patch \
     PATCH_DESC="($PKG_VERSION - $PATCH_ARCH)"
   elif [ $(dirname $i) = "$PROJECT_DIR/$PROJECT/patches/$PKG_NAME" ]; then
     PATCH_DESC="(project)"
+  elif [ $(dirname $i) = "$PROJECT_DIR/$PROJECT/patches/$PKG_NAME/$PKG_VERSION" ]; then
+    PATCH_DESC="(project - $PKG_VERSION)"
   elif [ $(dirname $i) = "$HOME/.openelec/patches/$PKG_NAME" ]; then
     PATCH_DESC="(vendor)"
   elif [ $(dirname $i) = "$HOME/.openelec/projects/$PROJECT/patches/$PKG_NAME" ]; then
@@ -151,12 +156,14 @@ if [ "$(type -t post_patch)" = "function" ]; then
 fi
 
 for config in `find $BUILD/$1* -name config.guess | sed 's/config.guess//'`; do
-  printf "%${BUILD_INDENT}c ${boldyellow}FIXCONFIG${endcolor}   $config\n" ' '>&$SILENT_OUT
+  if [ ! "$PKG_NAME" == "configtools" ] ; then
+    printf "%${BUILD_INDENT}c ${boldyellow}FIXCONFIG${endcolor}   $config\n" ' '
 
-  [ -f "$config/config.guess" ] && cp -f $SCRIPTS/configtools/config.guess $config
-  [ -f "$config/config.sub" ] && cp -f $SCRIPTS/configtools/config.sub $config
-  [ -f "$config/configure.guess" ] && cp -f $SCRIPTS/configtools/config.guess $config/configure.guess
-  [ -f "$config/configure.sub" ] && cp -f $SCRIPTS/configtools/config.sub $config/configure.sub
+    [ -f "$config/config.guess" -a -f $ROOT/$TOOLCHAIN/configtools/config.guess ] && \
+      cp -f $ROOT/$TOOLCHAIN/configtools/config.guess $config
+    [ -f "$config/config.sub" -a -f $ROOT/$TOOLCHAIN/configtools/config.sub ] && \
+      cp -f $ROOT/$TOOLCHAIN/configtools/config.sub $config
+  fi
 done
 
 rm -f $STAMPS/$1/build_*

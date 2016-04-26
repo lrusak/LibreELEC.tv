@@ -27,7 +27,11 @@
   OE_TMP=$(mktemp -d)
   SAVE_ERROR="$OE_TMP/save_error"
 
-  SYSTEM_SIZE=512
+  if [ -z "$SYSTEM_SIZE" -o -z "$SYSTEM_PART_START" ]; then
+    echo "mkimage: SYSTEM_SIZE and SYSTEM_PART_START must be configured!"
+    exit 1
+  fi
+
   STORAGE_SIZE=32 # STORAGE_SIZE must be >= 32 !
 
   DISK_SIZE=$(( $SYSTEM_SIZE + $STORAGE_SIZE + 4 ))
@@ -74,8 +78,8 @@ trap cleanup SIGINT
 
 # create part1
   echo "image: creating part1..."
-  SYSTEM_PART_END=$(( $SYSTEM_SIZE * 1024 * 1024 / 512 + 2048 ))
-  parted -s "$DISK" -a min unit s mkpart primary fat32 2048 $SYSTEM_PART_END
+  SYSTEM_PART_END=$(( ($SYSTEM_SIZE * 1024 * 1024 / 512) + $SYSTEM_PART_START ))
+  parted -s "$DISK" -a min unit s mkpart primary fat32 $SYSTEM_PART_START $SYSTEM_PART_END
   if [ "$BOOTLOADER" = "syslinux" ]; then
     parted -s "$DISK" set 1 legacy_boot on
   else
@@ -100,7 +104,7 @@ fi
 
 # create filesystem on part1
   echo "image: creating filesystem on part1..."
-  OFFSET=$(( 2048 * 512 ))
+  OFFSET=$(( $SYSTEM_PART_START * 512 ))
   HEADS=4
   TRACKS=32
   SECTORS=$(( $SYSTEM_SIZE * 1024 * 1024 / 512 / $HEADS / $TRACKS ))
@@ -145,6 +149,9 @@ EOF
     echo "image: copying files to part1..."
     mcopy $TARGET_IMG/$IMAGE_NAME.kernel "::/$KERNEL_NAME"
     mcopy $TARGET_IMG/$IMAGE_NAME.system ::/SYSTEM
+    mcopy $RELEASE_DIR/target/KERNEL.md5 "::/$KERNEL_NAME.md5"
+    mcopy $RELEASE_DIR/target/SYSTEM.md5 ::/SYSTEM.md5
+
     mmd EFI EFI/BOOT
     mcopy $ROOT/$TOOLCHAIN/share/syslinux/bootx64.efi ::/EFI/BOOT
     mcopy $ROOT/$TOOLCHAIN/share/syslinux/ldlinux.e64 ::/EFI/BOOT
@@ -162,10 +169,17 @@ EOF
     echo "image: copying files to part1..."
     mcopy $TARGET_IMG/$IMAGE_NAME.kernel "::/$KERNEL_NAME"
     mcopy $TARGET_IMG/$IMAGE_NAME.system ::/SYSTEM
+    mcopy $RELEASE_DIR/target/KERNEL.md5 "::/$KERNEL_NAME.md5"
+    mcopy $RELEASE_DIR/target/SYSTEM.md5 ::/SYSTEM.md5
+
     mcopy $RELEASE_DIR/3rdparty/bootloader/bootcode.bin ::
     mcopy $RELEASE_DIR/3rdparty/bootloader/fixup.dat ::
     mcopy $RELEASE_DIR/3rdparty/bootloader/start.elf ::
     mcopy $RELEASE_DIR/3rdparty/bootloader/config.txt ::
+      
+    if [ -f $RELEASE_DIR/3rdparty/bootloader/dt-blob.bin ]; then
+      mcopy $RELEASE_DIR/3rdparty/bootloader/dt-blob.bin ::
+    fi
 
     for dtb in $RELEASE_DIR/3rdparty/bootloader/*.dtb ; do
       if [ -f $dtb ] ; then
@@ -207,6 +221,8 @@ elif [ "$BOOTLOADER" = "u-boot" ]; then
     echo "image: copying files to part1..."
     mcopy $TARGET_IMG/$IMAGE_NAME.kernel "::/$KERNEL_NAME"
     mcopy $TARGET_IMG/$IMAGE_NAME.system ::/SYSTEM
+    mcopy $RELEASE_DIR/target/KERNEL.md5 "::/$KERNEL_NAME.md5"
+    mcopy $RELEASE_DIR/target/SYSTEM.md5 ::/SYSTEM.md5
 
     if [ -n "$UBOOT_SYSTEM" -a -f "$RELEASE_DIR/3rdparty/bootloader/u-boot-$UBOOT_SYSTEM.img" ]; then
       mcopy "$RELEASE_DIR/3rdparty/bootloader/u-boot-$UBOOT_SYSTEM.img" ::/u-boot.img

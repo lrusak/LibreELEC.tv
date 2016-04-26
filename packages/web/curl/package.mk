@@ -25,7 +25,7 @@
 #   there: http://forum.xbmc.org/showthread.php?tid=177557
 
 PKG_NAME="curl"
-PKG_VERSION="7.47.1"
+PKG_VERSION="7.48.0"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MIT"
@@ -87,7 +87,7 @@ PKG_CONFIGURE_OPTS_TARGET="ac_cv_lib_rtmp_RTMP_Init=yes \
                            --with-ssl \
                            --without-polarssl \
                            --without-nss \
-                           --with-ca-bundle=$SSL_CERTIFICATES/cacert.pem \
+                           --with-ca-bundle=/etc/ssl/cert.pem \
                            --without-ca-path \
                            --without-libpsl \
                            --without-libmetalink \

@@ -21,9 +21,9 @@ PKG_VERSION=""
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="http://www.openelec.tv"
+PKG_SITE="http://www.libreelec.tv"
 PKG_URL=""
-PKG_DEPENDS_TARGET="toolchain $MEDIACENTER $MEDIACENTER-theme-$SKIN_DEFAULT"
+PKG_DEPENDS_TARGET="toolchain $MEDIACENTER"
 PKG_PRIORITY="optional"
 PKG_SECTION="virtual"
 PKG_SHORTDESC="Mediacenter: Metapackage"
@@ -32,20 +32,19 @@ PKG_LONGDESC=""
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-for i in $SKINS; do
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET $MEDIACENTER-theme-$i"
-done
-
 if [ "$MEDIACENTER" = "kodi" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET $MEDIACENTER-theme-$SKIN_DEFAULT"
+
+  for i in $SKINS; do
+    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET $MEDIACENTER-theme-$i"
+  done
+  
 # some python stuff needed for various addons
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET Pillow"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET simplejson"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pycrypto"
-
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET Pillow \
+                                          simplejson \
+                                          pycrypto"
 # other packages
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET LibreELEC-settings"
-
-  if [ "$KODI_LANGUAGE_ADDONS" = "yes" ]; then
-    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET kodi-language-addons"
-  fi
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET LibreELEC-settings \
+                                          xmlstarlet \
+                                          peripheral.joystick"
 fi
