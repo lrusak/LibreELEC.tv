@@ -18,45 +18,44 @@
 ################################################################################
 
 PKG_NAME="glib"
-PKG_VERSION="2.53.5"
-PKG_SHA256="991421f41a4ed4cc1637e5f9db0d03fd236d2cbd19f3c5b097a343bec5126602"
+PKG_VERSION="2.54.1"
+PKG_SHA256="7413aedbfd3108aceea16e8b1b487d557066be3f8ce34dd3be308128c5caf5b7"
 PKG_ARCH="any"
 PKG_LICENSE="LGPL"
 PKG_SITE="http://www.gtk.org/"
-PKG_URL="http://ftp.gnome.org/pub/gnome/sources/glib/${PKG_VERSION%.*}/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="toolchain zlib libffi Python2:host util-linux"
-PKG_DEPENDS_HOST="libffi:host pcre:host"
+PKG_URL="https://github.com/GNOME/glib/archive/$PKG_VERSION.tar.gz"
+PKG_DEPENDS_TARGET="toolchain zlib libffi Python3:host util-linux"
+PKG_DEPENDS_HOST="Python3:host libffi:host pcre:host"
 PKG_SECTION="devel"
 PKG_SHORTDESC="glib: C support library"
 PKG_LONGDESC="GLib is a library which includes support routines for C such as lists, trees, hashes, memory allocation, and many other things."
 
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="yes"
+PKG_AUTORECONF="no"
+#PKG_USE_MESON="no"
 
-PKG_CONFIGURE_OPTS_HOST="PCRE_LIBS=-l:libpcre.a \
-                         --enable-static \
-                         --disable-shared \
-                         --disable-libmount \
-                         --with-python=python"
-PKG_CONFIGURE_OPTS_TARGET="ac_cv_func_snprintf_c99=yes \
-                           ac_cv_func_vsnprintf_c99=yes \
-                           glib_cv_stack_grows=no \
-                           glib_cv_uscore=no \
-                           glib_cv_va_val_copy=no \
-                           --disable-selinux \
-                           --disable-fam \
-                           --enable-xattr \
-                           --disable-libelf \
-                           --disable-gtk-doc \
-                           --disable-gtk-doc-html \
-                           --disable-man \
-                           --disable-dtrace \
-                           --disable-systemtap \
-                           --enable-Bsymbolic \
-                           --with-gnu-ld \
-                           --with-threads=posix \
-                           --with-pcre=internal \
-                           --with-python=python"
+PKG_MESON_OPTS_HOST="-Ddefault_library=static \
+                     -Dwith-docs=no \
+                     -Dwith-man=no \
+                     -Dwith-pcre=system \
+                     -Denable-libmount=no \
+                     -Denable-dtrace=false \
+                     -Denable-systemtap=false"
+
+PKG_MESON_OPTS_TARGET="-Dwith-docs=no \
+                       -Dwith-man=no \
+                       -Dwith-pcre=internal \
+                       -Denable-libmount=no \
+                       -Denable-dtrace=false \
+                       -Denable-systemtap=false"
+
+pre_configure_host() {
+  export LC_ALL=en_US.UTF-8
+}
+
+pre_configure_target() {
+  export LC_ALL=en_US.UTF-8
+}
 
 post_makeinstall_target() {
   mkdir -p $SYSROOT_PREFIX/usr/lib/pkgconfig
