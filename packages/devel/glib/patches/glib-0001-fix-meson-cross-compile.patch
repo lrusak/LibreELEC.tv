@@ -1,0 +1,109 @@
+diff -Naur a/meson.build b/meson.build
+--- a/meson.build	2017-10-02 08:01:27.000000000 -0700
++++ b/meson.build	2017-10-11 11:40:52.098023740 -0700
+@@ -630,11 +630,8 @@
+   exit(1);
+ }'''
+ 
+-  rres = cc.run(vsnprintf_c99_test_code, name : 'C99 vsnprintf')
+-  if rres.compiled() and rres.returncode() == 0
+-    glib_conf.set('HAVE_C99_VSNPRINTF', 1)
+-    have_good_vsnprintf = true
+-  endif
++  glib_conf.set('HAVE_C99_VSNPRINTF', 1)
++  have_good_vsnprintf = true
+ 
+   snprintf_c99_test_code = '''
+ #include <stdio.h>
+@@ -672,11 +669,8 @@
+   exit(1);
+ }'''
+ 
+-  rres = cc.run(snprintf_c99_test_code, name : 'C99 snprintf')
+-  if rres.compiled() and rres.returncode() == 0
+-    glib_conf.set('HAVE_C99_SNPRINTF', 1)
+-    have_good_snprintf = true
+-  endif
++  glib_conf.set('HAVE_C99_SNPRINTF', 1)
++  have_good_snprintf = true
+ endif
+ 
+ if host_system == 'windows'
+@@ -1127,9 +1121,7 @@
+ glib_va_val_copy = false
+ if cc.compiles(va_list_val_copy_prog, name : 'va_lists can be copied as values')
+   # FIXME: what to do when cross-compiling?
+-  if cc.run(va_list_val_copy_prog, name : 'va_lists can be copied as values').returncode() == 0
+-    glib_va_val_copy = true
+-  endif
++  glib_va_val_copy = true
+ endif
+ if not glib_va_val_copy
+   glib_va_val_copy = false
+@@ -1205,12 +1197,12 @@
+   error('FIX POLL* defines')
+ endif
+ 
+-value_POLLIN = cc.run(templ.format('POLLIN'), name : 'POLLIN value').stdout().strip()
+-value_POLLOUT = cc.run(templ.format('POLLOUT'), name : 'POLLOUT value').stdout().strip()
+-value_POLLPRI = cc.run(templ.format('POLLPRI'), name : 'POLLPRI value').stdout().strip()
+-value_POLLERR = cc.run(templ.format('POLLERR'), name : 'POLLERR value').stdout().strip()
+-value_POLLHUP = cc.run(templ.format('POLLHUP'), name : 'POLLHUP value').stdout().strip()
+-value_POLLNVAL = cc.run(templ.format('POLLNVAL'), name : 'POLLNVAL value').stdout().strip()
++value_POLLIN = 1
++value_POLLOUT = 4
++value_POLLPRI = 2
++value_POLLERR = 8
++value_POLLHUP = 16
++value_POLLNVAL = 32
+ 
+ glibconfig_conf.set('g_pollin', value_POLLIN)
+ glibconfig_conf.set('g_pollout', value_POLLOUT)
+@@ -1233,12 +1225,12 @@
+ endif
+ 
+ net_defines = [
+-  [ 'AF_UNIX', 'g_af_unix' ],
+-  [ 'AF_INET', 'g_af_inet' ],
+-  [ 'AF_INET6', 'g_af_inet6' ],
+-  [ 'MSG_OOB', 'g_msg_oob' ],
+-  [ 'MSG_PEEK', 'g_msg_peek' ],
+-  [ 'MSG_DONTROUTE', 'g_msg_dontroute' ],
++  [ 'AF_UNIX', 'g_af_unix', '1' ],
++  [ 'AF_INET', 'g_af_inet', '2' ],
++  [ 'AF_INET6', 'g_af_inet6', '10' ],
++  [ 'MSG_OOB', 'g_msg_oob', '1' ],
++  [ 'MSG_PEEK', 'g_msg_peek', '2' ],
++  [ 'MSG_DONTROUTE', 'g_msg_dontroute', '4' ],
+ ]
+ foreach d : net_defines
+   templ = '''@0@
+@@ -1247,12 +1239,7 @@
+   printf("%d\n", (int)@1@);
+   return 0;
+ }'''
+-  # FIXME: fix for cross-compilation
+-  if not meson.has_exe_wrapper()
+-    error('Fix sys define detection for cross build')
+-  endif
+-  val = cc.run(templ.format(glib_inet_includes, d[0]), name : d[0] + ' value').stdout().strip()
+-  glibconfig_conf.set(d[1], val)
++  glibconfig_conf.set(d[1], d[2])
+ endforeach
+ 
+ glibconfig_conf.set('GLIB_USING_SYSTEM_PRINTF', true) # FIXME!
+@@ -1355,12 +1342,8 @@
+     f (100);
+     return b > a ? 0 : 1;
+   }'''
+-stack_grows_run_result = cc.run(stack_grows_check_prog, name : 'stack grows check')
+-if stack_grows_run_result.compiled() and stack_grows_run_result.returncode() == 0
+-  glibconfig_conf.set('G_HAVE_GROWING_STACK', 1)
+-else
+-  glibconfig_conf.set('G_HAVE_GROWING_STACK', 0)
+-endif
++
++glibconfig_conf.set('G_HAVE_GROWING_STACK', 0)
+ 
+ # Tests for iconv
+ #

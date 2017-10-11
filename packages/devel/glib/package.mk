@@ -32,10 +32,8 @@ PKG_LONGDESC="GLib is a library which includes support routines for C such as li
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
-#PKG_USE_MESON="no"
 
-PKG_MESON_OPTS_HOST="-Ddefault_library=static \
-                     -Dwith-docs=no \
+PKG_MESON_OPTS_HOST="-Dwith-docs=no \
                      -Dwith-man=no \
                      -Dwith-pcre=system \
                      -Denable-libmount=no \
@@ -55,6 +53,10 @@ pre_configure_host() {
 
 pre_configure_target() {
   export LC_ALL=en_US.UTF-8
+
+  # meson needs a host compiler and it's detected through the environment. meh.
+  export CC="$HOST_CC"
+  export CXX="$HOST_CXX"
 }
 
 post_makeinstall_target() {
