@@ -54,6 +54,9 @@ setup_toolchain() {
         echo "cpu_family = '$TARGET_ARCH'" >> $MESON_CONF
         echo "cpu = '$TARGET_SUBARCH'" >> $MESON_CONF
         echo "endian = 'little'" >> $MESON_CONF
+        echo "" >> $MESON_CONF
+        echo "[properties]" >> $MESON_CONF
+        echo "root = '$SYSROOT_PREFIX/usr'" >> $MESON_CONF
       fi
       export HOST_CC="$TOOLCHAIN/bin/host-gcc"
       export HOST_CXX="$TOOLCHAIN/bin/host-g++"
@@ -106,6 +109,25 @@ setup_toolchain() {
         echo "SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)" >> $CMAKE_CONF
         echo "SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)" >> $CMAKE_CONF
         echo "SET(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)" >> $CMAKE_CONF
+      fi
+      export MESON_CONF=$TOOLCHAIN/etc/meson-$HOST_NAME.conf
+      if [ ! -f $MESON_CONF ] ; then
+        mkdir -p $TOOLCHAIN/etc
+        echo "[binaries]" >> $MESON_CONF
+        echo "c = '$CC'" >> $MESON_CONF
+        echo "cpp = '$CXX'" >> $MESON_CONF
+        echo "ar = '$AR'" >> $MESON_CONF
+        echo "strip = '$STRIP'" >> $MESON_CONF
+        echo "pkgconfig = '$PKG_CONFIG'" >> $MESON_CONF
+        echo "" >> $MESON_CONF
+        echo "[host_machine]" >> $MESON_CONF
+        echo "system = 'linux'" >> $MESON_CONF
+        echo "cpu_family = '$TARGET_ARCH'" >> $MESON_CONF
+        echo "cpu = '$TARGET_SUBARCH'" >> $MESON_CONF
+        echo "endian = 'big'" >> $MESON_CONF
+        echo ""	>> $MESON_CONF
+        echo "[properties]" >> $MESON_CONF
+        echo "root = '$TOOLCHAIN'" >> $MESON_CONF
       fi
       export HOST_CC="$CC"
       export HOST_CXX="$CXX"

@@ -184,7 +184,8 @@ if [ ! -f $STAMP ]; then
                      --libdir=$TOOLCHAIN/lib \
                      --libexecdir=$TOOLCHAIN/lib \
                      --localstatedir=$TOOLCHAIN/var \
-                     --buildtype=plain"
+                     --buildtype=plain \
+                     --cross-file=$MESON_CONF"
 
   # configure INIT build defaults
     INIT_CONFIGURE_OPTS="$TARGET_CONFIGURE_OPTS"
