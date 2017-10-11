@@ -38,8 +38,7 @@ HOST_CONFIGURE_OPTS="--prefix=$TOOLCHAIN \
   --libexecdir=$TOOLCHAIN/lib \
   --localstatedir=$TOOLCHAIN/var \
   --extra-cflags=-I$TOOLCHAIN/include \
-  --extra-ldflags=-L$TOOLCHAIN/lib \
-  --static \
+  --extra-ldflags=-lpthread \
   --disable-vnc \
   --disable-werror \
   --disable-blobs \
