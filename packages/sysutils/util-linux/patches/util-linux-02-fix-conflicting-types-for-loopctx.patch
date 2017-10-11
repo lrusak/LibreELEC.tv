@@ -1,0 +1,46 @@
+From c4e60bc0807b04ab104594abc83301481d5d5995 Mon Sep 17 00:00:00 2001
+From: Karel Zak <kzak@redhat.com>
+Date: Wed, 4 Oct 2017 10:08:08 +0200
+Subject: =?UTF-8?q?losetup:=20fix=20conflicting=20types=20for=20=E2=80=98l?=
+ =?UTF-8?q?oopcxt=5Fset=5Fblocksize=E2=80=99?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Reported-by: Lars Wendler <polynomial-c@gentoo.org>
+Signed-off-by: Karel Zak <kzak@redhat.com>
+---
+ lib/loopdev.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+(limited to 'lib/loopdev.c')
+
+diff --git a/lib/loopdev.c b/lib/loopdev.c
+index 66fa4f6..819aada 100644
+--- a/lib/loopdev.c
++++ b/lib/loopdev.c
+@@ -1430,7 +1430,11 @@ int loopcxt_set_dio(struct loopdev_cxt *lc, unsigned long use_dio)
+ 	return 0;
+ }
+ 
+-int loopcxt_set_blocksize(struct loopdev_cxt *lc, unsigned long blocksize)
++/*
++ * Kernel uses "unsigned long" as ioctl arg, but we use u64 for all sizes to
++ * keep loopdev internal API simple.
++ */
++int loopcxt_set_blocksize(struct loopdev_cxt *lc, uint64_t blocksize)
+ {
+ 	int fd = loopcxt_get_fd(lc);
+ 
+@@ -1438,7 +1442,7 @@ int loopcxt_set_blocksize(struct loopdev_cxt *lc, unsigned long blocksize)
+ 		return -EINVAL;
+ 
+ 	/* Kernels prior to v4.14 don't support this ioctl */
+-	if (ioctl(fd, LOOP_SET_BLOCK_SIZE, blocksize) < 0) {
++	if (ioctl(fd, LOOP_SET_BLOCK_SIZE, (unsigned long) blocksize) < 0) {
+ 		int rc = -errno;
+ 		DBG(CXT, ul_debugobj(lc, "LOOP_SET_BLOCK_SIZE failed: %m"));
+ 		return rc;
+-- 
+cgit v1.1
+
