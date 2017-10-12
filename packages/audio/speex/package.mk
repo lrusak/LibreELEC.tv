@@ -18,17 +18,15 @@
 
 PKG_NAME="speex"
 PKG_VERSION="1.2rc2"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="BSD"
 PKG_SITE="http://downloads.us.xiph.org/releases/speex"
 #PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_URL="$PKG_SITE/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_PRIORITY="optional"
 PKG_SECTION="audio"
 PKG_SHORTDESC="Speex / OPUS audio codec"
 PKG_LONGDESC="Speex / OPUS audio codec"
 
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="yes"
+PKG_AUTORECONF="no"

@@ -18,22 +18,18 @@
 ################################################################################
 
 PKG_NAME="open-vm-tools"
-PKG_VERSION="stable-10.0.7"
-PKG_REV="1"
+PKG_VERSION="stable-10.1.0"
 PKG_ARCH="x86_64"
 PKG_LICENSE="GPL"
 PKG_SITE="http://open-vm-tools.sourceforge.net"
 PKG_URL="https://github.com/vmware/open-vm-tools/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain glib:host glib libdnet"
-PKG_PRIORITY="optional"
+PKG_DEPENDS_TARGET="toolchain glib:host glib libdnet fuse"
 PKG_SECTION="virtualization"
 PKG_SHORTDESC="open-vm-tools: open source implementation of VMware Tools"
 PKG_LONGDESC="open-vm-tools: open source implementation of VMware Tools"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="yes"
-
-OPENVMTOOLS_KERNEL_VER=$(basename $(ls -d $ROOT/$BUILD/linux-[0-9]*)| sed 's|linux-||g')
 
 PKG_CONFIGURE_OPTS_TARGET="--disable-docs \
                            --disable-tests \
@@ -47,25 +43,29 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-docs \
                            --without-icu \
                            --without-procps \
                            --without-kernel-modules \
+                           --with-udev-rules-dir=/usr/lib/udev/rules.d/ \
                            --with-sysroot=$SYSROOT_PREFIX"
 
 post_unpack() {
   mv $PKG_BUILD/$PKG_NAME/* $PKG_BUILD/
+
+  sed -i -e 's|.*common-agent/etc/config/Makefile.*||' $PKG_BUILD/configure.ac
+  mkdir -p $PKG_BUILD/common-agent/etc/config
 }
 
 pre_configure_target() {
-   export LIBS="-ldnet"
+  export LIBS="-ldnet"
 }
 
-makeinstall_target() {
-  mkdir -p $INSTALL/usr/lib
-    cp -PR libvmtools/.libs/libvmtools.so* $INSTALL/usr/lib
+post_makeinstall_target() {
+  rm -rf $INSTALL/sbin
+  rm -rf $INSTALL/usr/share
+  rm -rf $INSTALL/etc/vmware-tools/scripts/vmware/network
 
-  mkdir -p $INSTALL/usr/bin
-    cp -PR services/vmtoolsd/.libs/vmtoolsd $INSTALL/usr/bin
-    cp -PR checkvm/.libs/vmware-checkvm $INSTALL/usr/bin
+  find $INSTALL/etc/vmware-tools/ -type f | xargs sed -i '/.*expr.*/d'
 }
 
 post_install() {
-  enable_service open-vm-tools.service
+  enable_service vmtoolsd.service
+  enable_service vmware-vmblock-fuse.service
 }

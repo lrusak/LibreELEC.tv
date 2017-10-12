@@ -20,15 +20,13 @@ PKG_NAME="xf86-video-nvidia"
 # Remember to run "python packages/x11/driver/xf86-video-nvidia/scripts/make_nvidia_udev.py" and commit changes to
 # "packages/x11/driver/xf86-video-nvidia/udev.d/96-nvidia.rules" whenever bumping version.
 # Host may require installation of python-lxml and python-requests packages.
-PKG_VERSION="352.79"
-PKG_REV="1"
+PKG_VERSION="384.90"
 PKG_ARCH="x86_64"
 PKG_LICENSE="nonfree"
 PKG_SITE="http://www.nvidia.com/"
 PKG_URL="http://us.download.nvidia.com/XFree86/Linux-x86_64/$PKG_VERSION/NVIDIA-Linux-x86_64-$PKG_VERSION-no-compat32.run"
 PKG_DEPENDS_TARGET="toolchain util-macros linux xorg-server libvdpau"
 PKG_NEED_UNPACK="$LINUX_DEPENDS"
-PKG_PRIORITY="optional"
 PKG_SECTION="x11/driver"
 PKG_SHORTDESC="xf86-video-nvidia: The Xorg driver for NVIDIA video chips"
 PKG_LONGDESC="These binary drivers provide optimized hardware acceleration of OpenGL applications via a direct-rendering X Server. AGP, PCIe, SLI, TV-out and flat panel displays are also supported. This version only supports GeForce 8xxx and higher of the Geforce GPUs plus complimentary Quadros and nforce."
@@ -69,13 +67,15 @@ makeinstall_target() {
       ln -sf /var/lib/libnvidia-ml.so.1 $INSTALL/usr/lib/libnvidia-ml.so.1
     cp -P tls/libnvidia-tls.so.$PKG_VERSION $INSTALL/usr/lib
   # rename to not conflicting with Mesa libGL.so
-    cp -P libGL.so* $INSTALL/usr/lib/libGL_nvidia.so.1
+    cp -P libGL.so.$PKG_VERSION $INSTALL/usr/lib/libGL_nvidia.so.1
 
-  mkdir -p $INSTALL/lib/modules/$(get_module_dir)/nvidia
-    ln -sf /var/lib/nvidia.ko $INSTALL/lib/modules/$(get_module_dir)/nvidia/nvidia.ko
+  mkdir -p $INSTALL/usr/lib/modules/$(get_module_dir)/nvidia
+    ln -sf /var/lib/nvidia.ko $INSTALL/usr/lib/modules/$(get_module_dir)/nvidia/nvidia.ko
+    cp -P kernel/nvidia-uvm.ko $INSTALL/usr/lib/modules/$(get_module_dir)/nvidia
+    cp -P kernel/nvidia-modeset.ko $INSTALL/usr/lib/modules/$(get_module_dir)/nvidia
 
   mkdir -p $INSTALL/usr/lib/nvidia
-    cp kernel/nvidia.ko $INSTALL/usr/lib/nvidia
+    cp -P kernel/nvidia.ko $INSTALL/usr/lib/nvidia
 
   mkdir -p $INSTALL/usr/bin
     ln -s /var/lib/nvidia-smi $INSTALL/usr/bin/nvidia-smi

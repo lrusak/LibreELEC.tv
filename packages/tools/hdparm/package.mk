@@ -17,14 +17,12 @@
 ################################################################################
 
 PKG_NAME="hdparm"
-PKG_VERSION="9.48"
-PKG_REV="1"
+PKG_VERSION="9.49"
 PKG_ARCH="any"
 PKG_LICENSE="BSD"
 PKG_SITE="http://sourceforge.net/projects/hdparm/"
 PKG_URL="$SOURCEFORGE_SRC/$PKG_NAME/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_PRIORITY="optional"
 PKG_SECTION="tools"
 PKG_SHORTDESC="hdparm: Get/set hard disk parameters"
 PKG_LONGDESC="Shell utility to access/tune ioctl features of the Linux IDE driver and IDE drives."
@@ -32,4 +30,7 @@ PKG_LONGDESC="Shell utility to access/tune ioctl features of the Linux IDE drive
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-PKG_MAKE_OPTS_TARGET="binprefix=/usr sbindir=/usr/bin"
+makeinstall_target() {
+  mkdir -p $INSTALL/usr/sbin
+    cp -a $PKG_BUILD/hdparm $INSTALL/usr/sbin
+}

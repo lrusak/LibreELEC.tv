@@ -1,8 +1,15 @@
-8.0.100
-- Update for LibreELEC 8.0
+103
+- once a serial number is in config file then ir_disabled parameter
+  needs to be localized below it (it is not global parameter anymore)
 
-7.0.101
-- added proper icon and description
+102
+- Automatically update driver to latest version on first install
+- Show driver version in addon settings
+- Allow update for aarch64 architecture
+- German translations
 
-7.0.100
-- initial LibreELEC version
+101
+- System wait-for-online preference is now respected
+
+100
+- Initial add-on

@@ -17,22 +17,20 @@
 ################################################################################
 
 PKG_NAME="libamcodec"
-PKG_REV="1"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="other"
 PKG_SITE="http://openlinux.amlogic.com"
-case $PROJECT in
-  WeTek_Core|WeTek_Play)
-    PKG_VERSION="45a1086"
+case $TARGET_KERNEL_ARCH in
+  arm)
+    PKG_VERSION="5e23a81"
     PKG_URL="https://github.com/codesnake/libamcodec/archive/$PKG_VERSION.tar.gz"
     ;;
-  Odroid_C2)
-    PKG_VERSION="210755d"
-    PKG_URL="http://amlinux.ru/source/$PKG_NAME-$PKG_VERSION.tar.gz"
+  arm64)
+    PKG_VERSION="2fba80c"
+    PKG_URL="https://github.com/surkovalex/libamcodec/archive/$PKG_VERSION.tar.gz"
     ;;
 esac
-PKG_DEPENDS_TARGET="toolchain"
-PKG_PRIORITY="optional"
+PKG_DEPENDS_TARGET="toolchain alsa-lib"
 PKG_SECTION="multimedia"
 PKG_SHORTDESC="libamcodec: Interface library for Amlogic media codecs"
 PKG_LONGDESC="libamplayer: Interface library for Amlogic media codecs"
@@ -55,4 +53,7 @@ makeinstall_target() {
 
   make -C amadec PREFIX="$INSTALL/usr" install
   make -C amcodec HEADERS_DIR="$INSTALL/usr/include/amcodec" PREFIX="$INSTALL/usr" install
+
+  # kodi prefers libamlplayer
+  ln -sf libamcodec.so $INSTALL/usr/lib/libamplayer.so
 }

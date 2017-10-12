@@ -1,6 +1,6 @@
 ################################################################################
-#      This file is part of LibreELEC - http://www.libreelec.tv
-#      Copyright (C) 2016 Team LibreELEC
+#      This file is part of LibreELEC - https://libreelec.tv
+#      Copyright (C) 2016-present Team LibreELEC
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -18,34 +18,38 @@
 
 PKG_NAME="dvb-tools"
 PKG_VERSION=""
-PKG_REV="100"
+PKG_REV="102"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE=""
 PKG_URL=""
 PKG_DEPENDS_TARGET="toolchain"
-PKG_PRIORITY="optional"
 PKG_SECTION="virtual"
-PKG_SHORTDESC="A bundle of dvb tools and programs"
-PKG_LONGDESC="This bundle currently includes dvb-apps, dvb-fe-tool and dvblast."
+PKG_SHORTDESC="DVB-Tools: is a bundle of dvb tools and programs"
+PKG_LONGDESC="This bundle currently includes blindscan-s2, dvb-apps, dvb-fe-tool, dvblast, dvbsnoop, mumudvb, szap-s2, tune-s2 and w_scan."
+PKG_AUTORECONF="no"
 
 PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="DVB Tools"
 PKG_ADDON_TYPE="xbmc.python.script"
-PKG_ADDON_PROVIDES=""
-PKG_ADDON_REPOVERSION="8.0"
-
-PKG_AUTORECONF="no"
 
 PKG_DEPENDS_TARGET="toolchain \
+                    blindscan-s2 \
                     dvb-apps \
                     dvb-fe-tool \
-                    dvblast"
+                    dvblast \
+                    dvbsnoop \
+                    mumudvb \
+                    szap-s2 \
+                    tune-s2 \
+                    w_scan"
 
 addon() {
-  mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/lib/
-
   mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/bin/
+
+    # blindscan-s2
+    cp -P $(get_build_dir blindscan-s2)/blindscan-s2 $ADDON_BUILD/$PKG_ADDON_ID/bin
+
     # dvb-apps
     cp -P $(get_build_dir dvb-apps)/util/dvbdate/dvbdate $ADDON_BUILD/$PKG_ADDON_ID/bin
     cp -P $(get_build_dir dvb-apps)/util/dvbnet/dvbnet $ADDON_BUILD/$PKG_ADDON_ID/bin
@@ -64,6 +68,21 @@ addon() {
 
     # dvblast
     cp -P $(get_build_dir dvblast)/dvblast $ADDON_BUILD/$PKG_ADDON_ID/bin
+
+    # dvbsnoop
+    cp -P $(get_build_dir dvbsnoop)/.$TARGET_NAME/src/dvbsnoop $ADDON_BUILD/$PKG_ADDON_ID/bin
+
+    # mumudvb
+    cp -P $(get_build_dir mumudvb)/.$TARGET_NAME/src/mumudvb $ADDON_BUILD/$PKG_ADDON_ID/bin
+
+    # szap-s2
+    cp -P $(get_build_dir szap-s2)/szap-s2 $ADDON_BUILD/$PKG_ADDON_ID/bin
+
+    # tune-s2
+    cp -P $(get_build_dir tune-s2)/tune-s2 $ADDON_BUILD/$PKG_ADDON_ID/bin
+
+    # w_scan
+    cp -P $(get_build_dir w_scan)/.$TARGET_NAME/w_scan $ADDON_BUILD/$PKG_ADDON_ID/bin
 
   debug_strip $ADDON_BUILD/$PKG_ADDON_ID/bin
 }

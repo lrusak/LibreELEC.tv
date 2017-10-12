@@ -18,13 +18,11 @@
 
 PKG_NAME="RPi.GPIO"
 PKG_VERSION="0.6.2"
-PKG_REV="1"
 PKG_ARCH="arm"
 PKG_LICENSE="MIT"
 PKG_SITE="http://sourceforge.net/p/raspberry-gpio-python/"
 PKG_URL="https://pypi.python.org/packages/source/R/RPi.GPIO/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain Python distutilscross:host"
-PKG_PRIORITY="optional"
 PKG_SECTION="python"
 PKG_SHORTDESC="A module to control Raspberry Pi GPIO channels"
 PKG_LONGDESC="A module to control Raspberry Pi GPIO channels"

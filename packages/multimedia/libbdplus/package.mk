@@ -18,19 +18,17 @@
 
 PKG_NAME="libbdplus"
 PKG_VERSION="0.1.2"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://www.videolan.org/developers/libbdplus.html"
 PKG_URL="https://ftp.videolan.org/pub/videolan/$PKG_NAME/$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain libgcrypt libgpg-error"
-PKG_PRIORITY="optional"
 PKG_SECTION="multimedia"
 PKG_SHORTDESC="libbdplus: A project to implement the BD+ System Specifications"
 PKG_LONGDESC="libbdplus is a research project to implement the BD+ System Specifications."
 
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="yes"
+PKG_AUTORECONF="no"
 
 PKG_CONFIGURE_OPTS_TARGET="--disable-werror \
                            --disable-extra-warnings \

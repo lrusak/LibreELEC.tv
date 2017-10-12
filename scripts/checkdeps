@@ -28,8 +28,8 @@ if  [ -f /etc/os-release ]; then
   DISTRO=$(grep ^ID= /etc/os-release | cut -d "=" -f 2 | tr A-Z a-z)
 fi
 
-deps="wget bash bc gcc sed patch tar bzip2 gzip perl gawk gperf zip unzip diff makeinfo"
-deps_pkg="wget bash bc gcc sed patch tar bzip2 gzip perl gawk gperf zip unzip diffutils texinfo"
+deps="wget bash bc gcc sed patch lsdiff tar bzip2 gzip perl gawk gperf zip unzip diff makeinfo lzop"
+deps_pkg="wget bash bc gcc sed patch patchutils tar bzip2 gzip perl gawk gperf zip unzip diffutils texinfo lzop"
 
 files="/usr/include/stdio.h /usr/include/ncurses.h"
 files_pkg="libc6-dev libncurses5-dev"
@@ -51,11 +51,21 @@ case "$DISTRO" in
       deps="$deps g++ mkfontscale mkfontdir bdftopcf xsltproc java"
       deps_pkg="$deps_pkg g++ xorg-mkfontscale xorg-mkfontdir xorg-bdftopcf libxslt java-runtime-common"
       ;;
+    opensuse)
+      deps="$deps g++ mkfontscale mkfontdir bdftopcf xsltproc java"
+      deps_pkg="$deps_pkg gcc-c++ mkfontscale mkfontdir bdftopcf libxslt-tools java-1_8_0-openjdk"
+      [[ ! `rpm -qa glibc-devel-static` ]] && deps="$deps glibc-devel-static" && deps_pkg="$deps_pkg glibc-devel-static"
+      ;;
     *)
       deps="$deps g++ mkfontscale mkfontdir bdftopcf xsltproc java"
       deps_pkg="$deps_pkg g++ xfonts-utils xfonts-utils xfonts-utils xsltproc default-jre"
       ;;
 esac
+
+if ! perl -MJSON -e 'exit(0);' 2>/dev/null; then
+  files="$files perl/JSON.pm"
+  files_pkg="$files_pkg libjson-perl"
+fi
 
 # project specific dependencies
 if [ -n "$EXTRA_DEPS" ] ; then
@@ -63,6 +73,14 @@ if [ -n "$EXTRA_DEPS" ] ; then
 fi
 if [ -n "$EXTRA_DEPS_PKG" ] ; then
   deps_pkg="$deps_pkg $EXTRA_DEPS_PKG"
+fi
+
+# distro specific dependencies
+if [ -n "$DISTRO_DEPS" ] ; then
+  deps="$deps $DISTRO_DEPS"
+fi
+if [ -n "$DISTRO_DEPS_PKG" ] ; then
+  deps_pkg="$deps_pkg $DISTRO_DEPS_PKG"
 fi
 
 getarg() {
@@ -83,7 +101,7 @@ done
 
 if [ -n "$need" ]; then
   echo "**** Your system lacks the following tools needed to build $DISTRONAME ****"
-  echo $need
+  echo $need provided by $need_pkg
   echo "**** You seem to use a $DISTRO system ****"
 
   case "$DISTRO" in
@@ -107,6 +125,10 @@ if [ -n "$need" ]; then
     arch)
       read -p "would you like to install the needed tools ? (y/n) " ans
       [ "$ans" = "y" ] && sudo pacman -Sy $need_pkg
+      ;;
+    opensuse)
+      read -p "would you like to install the needed tools ? (y/n) " ans
+      [ "$ans" = "y" ] && sudo zypper install -y --no-recommends $need_pkg
       ;;
     *)
       echo "**** unsupported distro $DISTRO ****"

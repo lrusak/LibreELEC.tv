@@ -18,13 +18,11 @@
 
 PKG_NAME="populatefs"
 PKG_VERSION="95cc98b"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/oskarirauta/populatefs"
 PKG_URL="https://github.com/oskarirauta/populatefs/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_HOST="e2fsprogs:host"
-PKG_PRIORITY="optional"
 PKG_SECTION="tools"
 PKG_SHORTDESC="populatefs: Tool for replacing genext2fs when creating ext4 images"
 PKG_LONGDESC="populatefs: Tool for replacing genext2fs when creating ext4 images"
@@ -38,6 +36,6 @@ make_host() {
 makeinstall_host() {
   $STRIP src/populatefs
 
-  mkdir -p $ROOT/$TOOLCHAIN/sbin
-  cp src/populatefs $ROOT/$TOOLCHAIN/sbin
+  mkdir -p $TOOLCHAIN/sbin
+  cp src/populatefs $TOOLCHAIN/sbin
 }

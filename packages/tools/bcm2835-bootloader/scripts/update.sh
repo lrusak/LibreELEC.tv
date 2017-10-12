@@ -24,6 +24,9 @@
 # mount $BOOT_ROOT r/w
   mount -o remount,rw $BOOT_ROOT
 
+# Something has gone horribly wrong... clean up
+  [ -s $BOOT_ROOT/overlays ] || rm -fr $BOOT_ROOT/overlays $BOOT_ROOT/FSCK*.REC
+
 # update bootloader files
   cp -p $SYSTEM_ROOT/usr/share/bootloader/LICENCE* $BOOT_ROOT
   cp -p $SYSTEM_ROOT/usr/share/bootloader/bootcode.bin $BOOT_ROOT
@@ -50,6 +53,12 @@
 #    sed -e "s,gpu_mem=100,gpu_mem=128,g" -i $BOOT_ROOT/config.txt
 #    sed -e "s,gpu_mem_256=100,# gpu_mem_256=128,g" -i $BOOT_ROOT/config.txt
 #    sed -e "s,gpu_mem_512=128,# gpu_mem_512=128,g" -i $BOOT_ROOT/config.txt
+  # Add distribution specific extra configuration file for the bootloader
+  fi
+
+# Add distro config file.
+  if [ -f $SYSTEM_ROOT/usr/share/bootloader/distroconfig.txt ]; then
+    cp -p $SYSTEM_ROOT/usr/share/bootloader/distroconfig.txt $BOOT_ROOT
   fi
 
 # mount $BOOT_ROOT r/o

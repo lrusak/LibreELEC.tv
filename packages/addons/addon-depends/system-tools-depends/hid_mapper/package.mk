@@ -1,6 +1,6 @@
 ################################################################################
-#      This file is part of LibreELEC - http://www.libreelec.tv
-#      Copyright (C) 2016 Team LibreELEC
+#      This file is part of LibreELEC - https://libreelec.tv
+#      Copyright (C) 2016-present Team LibreELEC
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -17,15 +17,12 @@
 ################################################################################
 
 PKG_NAME="hid_mapper"
-PKG_VERSION="0"
-PKG_REV="0"
+PKG_VERSION="2.1.0"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE=""
-PKG_URL="http://www.coldsource.net/hid_mapper.tar.gz"
-PKG_SOURCE_DIR="${PKG_NAME}_beta"
+PKG_SITE="https://github.com/s-leroux/hid_mapper"
+PKG_URL="https://github.com/s-leroux/hid_mapper/archive/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_PRIORITY="optional"
 PKG_SECTION="tools"
 PKG_SHORTDESC="generic HID mapper"
 PKG_LONGDESC="generic HID mapper"

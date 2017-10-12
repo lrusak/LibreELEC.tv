@@ -44,17 +44,8 @@
 # setup build defaults
 ################################################################################
 
-  # Build optimizations (size/normal)
-    OPTIMIZATIONS="size"
-
   # Project CFLAGS
     PROJECT_CFLAGS="-mmmx -msse -msse2 -mfpmath=sse"
-
-  # LTO (Link Time Optimization) support
-    LTO_SUPPORT="yes"
-
-  # GOLD (Google Linker) support
-    GOLD_SUPPORT="yes"
 
   # SquashFS compression method (gzip / lzo / xz)
     SQUASHFS_COMPRESSION="gzip"
@@ -94,4 +85,4 @@
   # for a list of additinoal drivers see packages/linux-drivers
   # Space separated list is supported,
   # e.g. ADDITIONAL_DRIVERS="DRIVER1 DRIVER2"
-    ADDITIONAL_DRIVERS="$ADDITIONAL_DRIVERS bcm_sta"
+    ADDITIONAL_DRIVERS="$ADDITIONAL_DRIVERS bcm_sta media_build"

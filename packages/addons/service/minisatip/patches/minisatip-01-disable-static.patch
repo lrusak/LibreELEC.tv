@@ -1,0 +1,13 @@
+Subject: allow to build with libressl shared
+
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -81,8 +81,6 @@ CFLAGS+=-DNO_BACKTRACE
+ endif
+ 
+ ifeq ($(STATIC),1)
+-LDFLAGS+=$(addsuffix .a,$(addprefix -l:lib,$(LIBS)))
+-else
+ LDFLAGS+=$(addprefix -l,$(LIBS))
+ endif
+ 

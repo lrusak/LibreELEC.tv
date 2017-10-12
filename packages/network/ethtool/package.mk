@@ -18,16 +18,14 @@
 
 PKG_NAME="ethtool"
 PKG_VERSION="4.2"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.kernel.org/pub/software/network/ethtool/"
 PKG_URL="http://www.kernel.org/pub/software/network/ethtool/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_PRIORITY="optional"
 PKG_SECTION="network"
 PKG_SHORTDESC="ethtool: Display or change ethernet card settings"
 PKG_LONGDESC="Ethtool is used for querying settings of an ethernet device and changing them."
 
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="yes"
+PKG_AUTORECONF="no"

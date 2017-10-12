@@ -54,6 +54,7 @@ STAMP=$STAMPS/$PACKAGE_NAME/build_$TARGET
 $SCRIPTS/unpack $PACKAGE_NAME
 
 STAMP_DEPENDS="$PKG_DIR $PKG_NEED_UNPACK $PROJECT_DIR/$PROJECT/patches/$PKG_NAME"
+[ -n "$DEVICE" ] && STAMP_DEPENDS="$STAMP_DEPENDS $PROJECT_DIR/$PROJECT/devices/$DEVICE/patches/$PKG_NAME"
 
 if [ -f $STAMP ] ; then
   . $STAMP
@@ -66,11 +67,7 @@ fi
 if [ ! -f $STAMP ]; then
   rm -f $STAMP
 
-  if [ "$TARGET" = "bootstrap" -o "$TARGET" = "init" ]; then
-    setup_toolchain target
-  else
-    setup_toolchain $TARGET
-  fi
+  setup_toolchain $TARGET
 
   # unset functions
     unset -f pre_build_target
@@ -118,56 +115,51 @@ if [ ! -f $STAMP ]; then
     unset -f post_makeinstall_bootstrap
 
   # configure TARGET build defaults
-    unset -v TARGET_CONFIGURE_OPTS
     TARGET_CONFIGURE_OPTS="--host=$TARGET_NAME \
                            --build=$HOST_NAME \
                            --prefix=/usr \
                            --bindir=/usr/bin \
                            --sbindir=/usr/sbin \
                            --sysconfdir=/etc \
+                           --libdir=/usr/lib \
                            --libexecdir=/usr/lib \
                            --localstatedir=/var \
                            --disable-static \
                            --enable-shared"
 
+    if [ "$DEBUG" = "yes" ]; then
+      CMAKE_BUILD_TYPE="Debug"
+    else
+      CMAKE_BUILD_TYPE="MinSizeRel"
+    fi
+
+    TARGET_CMAKE_OPTS="-DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF \
+                       -DCMAKE_INSTALL_PREFIX=/usr \
+                       -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE"
+
   # configure HOST build defaults
-    unset -v HOST_CONFIGURE_OPTS
     HOST_CONFIGURE_OPTS="--host=$HOST_NAME \
                          --build=$HOST_NAME \
-                         --prefix=$ROOT/$TOOLCHAIN \
-                         --bindir=$ROOT/$TOOLCHAIN/bin \
-                         --sbindir=$ROOT/$TOOLCHAIN/sbin \
-                         --sysconfdir=$ROOT/$TOOLCHAIN/etc \
-                         --libexecdir=$ROOT/$TOOLCHAIN/lib \
-                         --localstatedir=$ROOT/$TOOLCHAIN/var \
+                         --prefix=$TOOLCHAIN \
+                         --bindir=$TOOLCHAIN/bin \
+                         --sbindir=$TOOLCHAIN/sbin \
+                         --sysconfdir=$TOOLCHAIN/etc \
+                         --libexecdir=$TOOLCHAIN/lib \
+                         --localstatedir=$TOOLCHAIN/var \
                          --disable-static \
                          --enable-shared"
+
+    HOST_CMAKE_OPTS="-DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF \
+                     -DCMAKE_INSTALL_PREFIX=$TOOLCHAIN \
+                     -DCMAKE_BUILD_TYPE=Release"
 
   # configure INIT build defaults
-    unset -v INIT_CONFIGURE_OPTS
-    INIT_CONFIGURE_OPTS="--host=$TARGET_NAME \
-                         --build=$HOST_NAME \
-                         --prefix=/usr \
-                         --bindir=/usr/bin \
-                         --sbindir=/usr/sbin \
-                         --sysconfdir=/etc \
-                         --libexecdir=/usr/lib \
-                         --localstatedir=/var \
-                         --disable-static \
-                         --enable-shared"
+    INIT_CONFIGURE_OPTS="$TARGET_CONFIGURE_OPTS"
+    INIT_CMAKE_OPTS="$TARGET_CMAKE_OPTS"
 
   # configure BOOTSTRAP build defaults
-    unset -v BOOTSTRAP_CONFIGURE_OPTS
-    BOOTSTRAP_CONFIGURE_OPTS="--host=$TARGET_NAME \
-                              --build=$HOST_NAME \
-                              --prefix=/usr \
-                              --bindir=/usr/bin \
-                              --sbindir=/usr/sbin \
-                              --sysconfdir=/etc \
-                              --libexecdir=/usr/lib \
-                              --localstatedir=/var \
-                              --disable-static \
-                              --enable-shared"
+    BOOTSTRAP_CONFIGURE_OPTS="$HOST_CONFIGURE_OPTS"
+    BOOTSTRAP_CMAKE_OPTS="$HOST_CMAKE_OPTS"
 
   # include buildfile
     . $PKG_DIR/package.mk
@@ -202,9 +194,9 @@ if [ ! -f $STAMP ]; then
 
       # configure other variables
       if [ "$TARGET" = "target" ]; then
-        INSTALL=$ROOT/$PKG_BUILD/.install_pkg
+        INSTALL=$PKG_BUILD/.install_pkg
       elif [ "$TARGET" = "init" ]; then
-        INSTALL=$ROOT/$PKG_BUILD/.install_init
+        INSTALL=$PKG_BUILD/.install_init
       fi
 
        # clean up
@@ -216,14 +208,12 @@ if [ ! -f $STAMP ]; then
 
       # setup configure script
       if [ -z "$PKG_CONFIGURE_SCRIPT" ]; then
-        PKG_CONFIGURE_SCRIPT="$ROOT/$PKG_BUILD/configure"
+        PKG_CONFIGURE_SCRIPT="$PKG_BUILD/configure"
       else
-        PKG_CONFIGURE_SCRIPT="$ROOT/$PKG_BUILD/$PKG_CONFIGURE_SCRIPT"
+        PKG_CONFIGURE_SCRIPT="$PKG_BUILD/$PKG_CONFIGURE_SCRIPT"
       fi
       if [ -z "$PKG_CMAKE_SCRIPT" ]; then
-        PKG_CMAKE_SCRIPT="$ROOT/$PKG_BUILD/CMakeLists.txt"
-      else
-        PKG_CMAKE_SCRIPT="$ROOT/$PKG_BUILD/$PKG_CMAKE_SCRIPT"
+        PKG_CMAKE_SCRIPT="$PKG_BUILD/CMakeLists.txt"
       fi
 
       # include build template and build
@@ -250,13 +240,13 @@ if [ ! -f $STAMP ]; then
         fi
       elif [ "$TARGET" = "init" ]; then
         if [ -f "$PKG_CONFIGURE_SCRIPT" -o -f "$PKG_CMAKE_SCRIPT" ]; then
-          mkdir -p .$TARGET_NAME-init
-          cd .$TARGET_NAME-init
+          mkdir -p .$TARGET_NAME-$TARGET
+          cd .$TARGET_NAME-$TARGET
         fi
       elif [ "$TARGET" = "bootstrap" ]; then
         if [ -f "$PKG_CONFIGURE_SCRIPT" -o -f "$PKG_CMAKE_SCRIPT" ]; then
-          mkdir -p .$TARGET_NAME-bootstrap
-          cd .$TARGET_NAME-bootstrap
+          mkdir -p .$HOST_NAME-$TARGET
+          cd .$HOST_NAME-$TARGET
         fi
       fi
 
@@ -266,14 +256,32 @@ if [ ! -f $STAMP ]; then
       fi
       if [ "$(type -t configure_$TARGET)" = "function" ]; then
         configure_$TARGET
+      elif [ -f "$PKG_CMAKE_SCRIPT" -a ! "$PKG_USE_CMAKE" = "no" ]; then
+        if [ "$TARGET" = "target" ]; then
+          echo "Executing (target): cmake $TARGET_CMAKE_OPTS $PKG_CMAKE_OPTS_TARGET $(dirname $PKG_CMAKE_SCRIPT)" | tr -s " "
+          cmake $TARGET_CMAKE_OPTS $PKG_CMAKE_OPTS_TARGET $(dirname $PKG_CMAKE_SCRIPT)
+        elif [ "$TARGET" = "host" ]; then
+          echo "Executing (host): cmake $HOST_CMAKE_OPTS $PKG_CMAKE_OPTS_HOST $(dirname $PKG_CMAKE_SCRIPT)" | tr -s " "
+          cmake $HOST_CMAKE_OPTS $PKG_CMAKE_OPTS_HOST $(dirname $PKG_CMAKE_SCRIPT)
+        elif [ "$TARGET" = "init" ]; then
+          echo "Executing (init): cmake $INIT_CMAKE_OPTS $PKG_CMAKE_OPTS_INIT $(dirname $PKG_CMAKE_SCRIPT)" | tr -s " "
+          cmake $INIT_CMAKE_OPTS $PKG_CMAKE_OPTS_INIT $(dirname $PKG_CMAKE_SCRIPT)
+        elif [ "$TARGET" = "bootstrap" ]; then
+          echo "Executing (bootstrap): cmake $BOOTSTRAP_CMAKE_OPTS $PKG_CMAKE_OPTS_BOOTSTRAP $(dirname $PKG_CMAKE_SCRIPT)" | tr -s " "
+          cmake $BOOTSTRAP_CMAKE_OPTS $PKG_CMAKE_OPTS_BOOTSTRAP $(dirname $PKG_CMAKE_SCRIPT)
+        fi
       elif [ -f "$PKG_CONFIGURE_SCRIPT" ]; then
         if [ "$TARGET" = "target" ]; then
+          echo "Executing (target): $PKG_CONFIGURE_SCRIPT $TARGET_CONFIGURE_OPTS $PKG_CONFIGURE_OPTS_TARGET" | tr -s " "
           $PKG_CONFIGURE_SCRIPT $TARGET_CONFIGURE_OPTS $PKG_CONFIGURE_OPTS_TARGET
         elif [ "$TARGET" = "host" ]; then
+          echo "Executing (host): $PKG_CONFIGURE_SCRIPT $HOST_CONFIGURE_OPTS $PKG_CONFIGURE_OPTS_HOST" | tr -s " "
           $PKG_CONFIGURE_SCRIPT $HOST_CONFIGURE_OPTS $PKG_CONFIGURE_OPTS_HOST
         elif [ "$TARGET" = "init" ]; then
+          echo "Executing (init): $PKG_CONFIGURE_SCRIPT $INIT_CONFIGURE_OPTS $PKG_CONFIGURE_OPTS_INIT" | tr -s " "
           $PKG_CONFIGURE_SCRIPT $INIT_CONFIGURE_OPTS $PKG_CONFIGURE_OPTS_INIT
         elif [ "$TARGET" = "bootstrap" ]; then
+          echo "Executing (bootstrap): $PKG_CONFIGURE_SCRIPT $BOOTSTRAP_CONFIGURE_OPTS $PKG_CONFIGURE_OPTS_BOOTSTRAP" | tr -s " "
           $PKG_CONFIGURE_SCRIPT $BOOTSTRAP_CONFIGURE_OPTS $PKG_CONFIGURE_OPTS_BOOTSTRAP
         fi
       fi
@@ -289,12 +297,16 @@ if [ ! -f $STAMP ]; then
         make_$TARGET
       else
         if [ "$TARGET" = "target" ]; then
+          echo "Executing (target): make $PKG_MAKE_OPTS_TARGET" | tr -s " "
           make $PKG_MAKE_OPTS_TARGET
         elif [ "$TARGET" = "host" ]; then
+          echo "Executing (host): make $PKG_MAKE_OPTS_HOST" | tr -s " "
           make $PKG_MAKE_OPTS_HOST
         elif [ "$TARGET" = "init" ]; then
+          echo "Executing (init): make $PKG_MAKE_OPTS_INIT" | tr -s " "
           make $PKG_MAKE_OPTS_INIT
         elif [ "$TARGET" = "bootstrap" ]; then
+          echo "Executing (bootstrap): make $PKG_MAKE_OPTS_BOOTSTRAP" | tr -s " "
           make $PKG_MAKE_OPTS_BOOTSTRAP
         fi
       fi
@@ -317,7 +329,7 @@ if [ ! -f $STAMP ]; then
         elif [ "$TARGET" = "init" ]; then
           make install DESTDIR=$INSTALL $PKG_MAKEINSTALL_OPTS_INIT
         elif [ "$TARGET" = "bootstrap" ]; then
-          $MAKEINSTALL $PKG_MAKEINSTALL_OPTS_BOOTSTRAP
+          make install $PKG_MAKEINSTALL_OPTS_BOOTSTRAP
         fi
       fi
       if [ "$(type -t post_makeinstall_$TARGET)" = "function" ]; then
@@ -325,31 +337,30 @@ if [ ! -f $STAMP ]; then
       fi
 
       if [ "$TARGET" = "target" -o "$TARGET" = "init" ]; then
-       if [ -d $INSTALL ] ; then
-         for i in $INSTALL $INSTALL/usr; do
-            rm -rf $i/include
-            rm -rf $i/lib/cmake
-            rm -rf $i/lib/pkgconfig
-            rm -rf $i/man
-            rm -rf $i/share/aclocal
-            rm -rf $i/share/bash-completion
-            rm -rf $i/share/doc
-            rm -rf $i/share/gtk-doc
-            rm -rf $i/share/info
-            rm -rf $i/share/locale
-            rm -rf $i/share/man
-            rm -rf $i/share/pkgconfig
-            find $i -name "*.la" -exec rm -f "{}" ";" 2>/dev/null || true
-            find $i -name "*.a" -exec rm -f "{}" ";" 2>/dev/null || true
-            find $i -name "*.so*T" -exec rm -f "{}" ";" 2>/dev/null || true
-            # patch backups nonsense
-            find $i -name "*.orig" -exec rm -f "{}" ";" 2>/dev/null || true
-            # kodi / addons nonsense
-            find $i -name "addon.xml.in" -exec rm -f "{}" ";" 2>/dev/null || true
-            find $i -name "Makefile.in" -exec rm -f "{}" ";" 2>/dev/null || true
-          done
-
-          find $INSTALL -type d -exec rmdir -p "{}" ";" 2>/dev/null || true
+        if [ -d $INSTALL ] ; then
+          rm -rf $INSTALL/{usr/,}include
+          rm -rf $INSTALL/{usr/,}lib/cmake
+          rm -rf $INSTALL/{usr/,}lib/pkgconfig
+          rm -rf $INSTALL/{usr/,}man
+          rm -rf $INSTALL/{usr/,}share/aclocal
+          rm -rf $INSTALL/{usr/,}share/bash-completion
+          rm -rf $INSTALL/{usr/,}share/doc
+          rm -rf $INSTALL/{usr/,}share/gtk-doc
+          rm -rf $INSTALL/{usr/,}share/info
+          rm -rf $INSTALL/{usr/,}share/locale
+          rm -rf $INSTALL/{usr/,}share/man
+          rm -rf $INSTALL/{usr/,}share/pkgconfig
+          rm -rf $INSTALL/{usr/,}share/zsh
+          rm -rf $INSTALL/{usr/,}var
+          find $INSTALL \( -name "*.orig" \
+                        -o -name "*.rej" \
+                        -o -name "*.a" \
+                        -o -name "*.la" \
+                        -o -name "*.o" \
+                        -o -name "*.in" \
+                        -o -name ".git*" \) \
+            -exec rm -f {} \; 2>/dev/null || :
+          find $INSTALL -type d -exec rmdir -p {} \; 2>/dev/null || :
 
           if [ ! "$DEBUG" = yes ]; then
             $STRIP `find $INSTALL \
@@ -377,7 +388,6 @@ if [ ! -f $STAMP ]; then
 
     PKG_DEEPMD5=$(find $STAMP_DEPENDS -exec md5sum {} \; 2>/dev/null | sort | md5sum | cut -d" " -f1)
     for i in PKG_NAME PKG_DEEPMD5; do
-      eval val=\$$i
-      echo "STAMP_$i=\"$val\"" >> $STAMP
+      echo "STAMP_$i=\"${!i}\"" >> $STAMP
     done
 fi

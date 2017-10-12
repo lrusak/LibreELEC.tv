@@ -17,30 +17,30 @@
 ################################################################################
 
 PKG_NAME="screen"
-PKG_VERSION="4.3.1"
-PKG_REV="1"
+PKG_VERSION="4.5.1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.gnu.org/software/screen/"
-PKG_URL="http://ftp.gnu.org/gnu/screen/screen-${PKG_VERSION}.tar.gz"
+PKG_URL="http://ftpmirror.gnu.org/screen/$PKG_NAME-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain netbsd-curses"
-PKG_PRIORITY="optional"
 PKG_SECTION="shell/console"
 PKG_SHORTDESC="terminal multiplexor with VT100/ANSI terminal emulation"
-PKG_LONGDESC="screen is a terminal multiplexor that runs several separate "screens" on a single physical character-based terminal. Each virtual terminal emulates a DEC VT100 plus several ANSI X3.64 and ISO 2022 functions. Screen sessions can be detached and resumed later on a different terminal."
+PKG_LONGDESC="screen is a terminal multiplexor that runs several separate screens on a single physical character-based terminal. Each virtual terminal emulates a DEC VT100 plus several ANSI X3.64 and ISO 2022 functions. Screen sessions can be detached and resumed later on a different terminal."
 PKG_AUTORECONF="no"
 
 PKG_CONFIGURE_OPTS_TARGET="ac_cv_header_utempter_h=no \
+                           --enable-colors256 \
                            --disable-pam \
                            --disable-use-locale \
                            --disable-telnet \
                            --disable-socket-dir"
 
 pre_configure_target() {
+  CFLAGS="$CFLAGS -DTERMINFO"
   export LDFLAGS=`echo $LDFLAGS | sed -e "s|-Wl,--as-needed||"`
 
 # screen fails to build in subdirs
-  cd $ROOT/$PKG_BUILD
+  cd $PKG_BUILD
     rm -rf .$TARGET_NAME
 }
 

@@ -18,13 +18,11 @@
 
 PKG_NAME="mkbootimg"
 PKG_VERSION="6668fc2"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://android.googlesource.com/platform/system/core/+/master/mkbootimg/"
 PKG_URL="https://github.com/codesnake/mkbootimg/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_HOST=""
-PKG_PRIORITY="optional"
 PKG_SECTION="tools"
 PKG_SHORTDESC="mkbootimg: Creates kernel boot images for Android"
 PKG_LONGDESC="mkbootimg: Creates kernel boot images for Android"
@@ -34,5 +32,5 @@ PKG_AUTORECONF="no"
 
 makeinstall_host() {
   mkdir -p $SYSROOT_PREFIX/usr/include
-  cp mkbootimg $ROOT/$TOOLCHAIN/bin/
+  cp mkbootimg $TOOLCHAIN/bin/
 }

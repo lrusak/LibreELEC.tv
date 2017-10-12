@@ -1,5 +1,11 @@
-8.0.101
+103
+- Update to 77b33a6
+
+102
+- Build with Linux 4.7 RPi libraries
+
+101
 - Move settings to Kodi
 
-8.0.100
+100
 - Initial addon

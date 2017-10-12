@@ -18,13 +18,11 @@
 
 PKG_NAME="vdr-plugin-xmltv2vdr"
 PKG_VERSION="b48e0bec"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://projects.vdr-developer.org/projects/plg-xmltv2vdr"
 PKG_URL="http://projects.vdr-developer.org/git/vdr-plugin-xmltv2vdr.git/snapshot/${PKG_NAME}-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain vdr sqlite curl libzip libxml2 libxslt enca pcre"
-PKG_PRIORITY="optional"
 PKG_SECTION="multimedia"
 PKG_SHORTDESC="vdr-xmltv2vdr"
 PKG_LONGDESC="vdr-xmltv2vdr"
@@ -35,9 +33,9 @@ PKG_AUTORECONF="no"
 
 pre_configure_target() {
   export CFLAGS="$CFLAGS -fPIC"
-  export CXXFLAGS="$CXXFLAGS -fPIC"
+  export CXXFLAGS="$CXXFLAGS -fPIC -Wno-narrowing"
   export LDFLAGS="$LDFLAGS -fPIC"
-  export LIBS="-L$SYSROOT_PREFIX/usr/lib/iconv"
+  export LIBS="-L$SYSROOT_PREFIX/usr/lib/iconv -lpcre -lpcrecpp"
 }
 
 make_target() {

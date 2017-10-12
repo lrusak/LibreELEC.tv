@@ -17,20 +17,18 @@
 ################################################################################
 
 PKG_NAME="libxcb"
-PKG_VERSION="1.11.1"
-PKG_REV="1"
+PKG_VERSION="1.12"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
 PKG_SITE="http://xcb.freedesktop.org"
 PKG_URL="http://xcb.freedesktop.org/dist/$PKG_NAME-$PKG_VERSION.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain util-macros Python:host xcb-proto libpthread-stubs libXau"
-PKG_PRIORITY="optional"
 PKG_SECTION="x11/lib"
 PKG_SHORTDESC="libxcb: X C-language Bindings library"
 PKG_LONGDESC="X C-language Bindings library."
 
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="yes"
+PKG_AUTORECONF="no"
 
 PKG_CONFIGURE_OPTS_TARGET="--enable-static --disable-shared \
                            --disable-screensaver \

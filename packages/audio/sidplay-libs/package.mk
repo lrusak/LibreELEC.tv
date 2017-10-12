@@ -18,24 +18,24 @@
 
 PKG_NAME="sidplay-libs"
 PKG_VERSION="2.1.1"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://sidplay2.sourceforge.net/"
 PKG_URL="http://mirrors.xbmc.org/build-deps/sources/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_PRIORITY="optional"
 PKG_SECTION="audio"
 PKG_SHORTDESC="sidplay-libs"
 PKG_LONGDESC="sidplay-libs"
 
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="yes"
+PKG_AUTORECONF="no"
 
 PKG_CONFIGURE_OPTS_TARGET="--disable-shared --enable-static"
 
 pre_configure_target() {
   # fails to build in subdirs
-  cd $ROOT/$PKG_BUILD
+  cd $PKG_BUILD
   rm -rf .$TARGET_NAME
+
+  export CXXFLAGS="$CXXFLAGS -Wno-narrowing"
 }

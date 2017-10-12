@@ -18,13 +18,11 @@
 
 PKG_NAME="usb-modeswitch"
 PKG_VERSION="2.3.0"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.draisberghof.de/usb_modeswitch/"
 PKG_URL="http://www.draisberghof.de/usb_modeswitch/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain libusb"
-PKG_PRIORITY="optional"
 PKG_SECTION="tools"
 PKG_SHORTDESC="USB_ModeSwitch - Handling Mode-Switching USB Devices on Linux"
 PKG_LONGDESC="USB_ModeSwitch - Handling Mode-Switching USB Devices on Linux"

@@ -17,14 +17,12 @@
 ################################################################################
 
 PKG_NAME="pkg-config"
-PKG_VERSION="0.29"
-PKG_REV="1"
+PKG_VERSION="0.29.1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.freedesktop.org/software/pkgconfig/"
-PKG_URL="http://pkgconfig.freedesktop.org/releases/$PKG_NAME-$PKG_VERSION.tar.gz"
+PKG_URL="http://pkg-config.freedesktop.org/releases/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_HOST="ccache:host gettext:host"
-PKG_PRIORITY="optional"
 PKG_SECTION="toolchain/devel"
 PKG_SHORTDESC="pkg-config: A library configuration management system"
 PKG_LONGDESC="pkg-config is a system for managing library compile/link flags that works with automake and autoconf. It replaces the ubiquitous *-config scripts you may have seen with a single tool."

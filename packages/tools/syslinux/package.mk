@@ -18,14 +18,12 @@
 
 PKG_NAME="syslinux"
 PKG_VERSION="6.03"
-PKG_REV="1"
 PKG_ARCH="x86_64"
 PKG_LICENSE="GPL"
 PKG_SITE="http://syslinux.zytor.com/"
 PKG_URL="http://www.kernel.org/pub/linux/utils/boot/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_HOST="util-linux:host"
 PKG_DEPENDS_TARGET="toolchain util-linux e2fsprogs syslinux:host"
-PKG_PRIORITY="optional"
 PKG_SECTION="tools"
 PKG_SHORTDESC="syslinux: Linux bootloader collection"
 PKG_LONGDESC="The SYSLINUX project covers lightweight linux bootloaders for floppy media (syslinux), network booting (pxelinux) and bootable el-torito cd-roms (isolinux)."
@@ -63,22 +61,22 @@ make_host() {
   make CC=$CC \
        AR=$AR \
        RANLIB=$RANLIB \
-       CFLAGS="-I$ROOT/$TOOLCHAIN/include -I$ROOT/$PKG_BUILD/libinstaller -I$ROOT/$PKG_BUILD/libfat -I$ROOT/$PKG_BUILD/bios -I$ROOT/$PKG_BUILD/utils -fomit-frame-pointer -D_FILE_OFFSET_BITS=64" \
-       LDFLAGS="-L$ROOT/$TOOLCHAIN/lib" \
+       CFLAGS="-I$TOOLCHAIN/include -I$PKG_BUILD/libinstaller -I$PKG_BUILD/libfat -I$PKG_BUILD/bios -I$PKG_BUILD/utils -fomit-frame-pointer -D_FILE_OFFSET_BITS=64" \
+       LDFLAGS="-L$TOOLCHAIN/lib" \
        installer
 }
 
 makeinstall_host() {
-  mkdir -p $ROOT/$TOOLCHAIN/bin
-    cp bios/extlinux/extlinux $ROOT/$TOOLCHAIN/bin
-    cp bios/linux/syslinux $ROOT/$TOOLCHAIN/bin
-    cp bios/mtools/syslinux $ROOT/$TOOLCHAIN/bin/syslinux.mtools
+  mkdir -p $TOOLCHAIN/bin
+    cp bios/extlinux/extlinux $TOOLCHAIN/bin
+    cp bios/linux/syslinux $TOOLCHAIN/bin
+    cp bios/mtools/syslinux $TOOLCHAIN/bin/syslinux.mtools
 
-  mkdir -p $ROOT/$TOOLCHAIN/share/syslinux
-    cp bios/mbr/mbr.bin $ROOT/$TOOLCHAIN/share/syslinux
-    cp bios/mbr/gptmbr.bin $ROOT/$TOOLCHAIN/share/syslinux
-    cp efi64/efi/syslinux.efi $ROOT/$TOOLCHAIN/share/syslinux/bootx64.efi
-    cp efi64/com32/elflink/ldlinux/ldlinux.e64  $ROOT/$TOOLCHAIN/share/syslinux
+  mkdir -p $TOOLCHAIN/share/syslinux
+    cp bios/mbr/mbr.bin $TOOLCHAIN/share/syslinux
+    cp bios/mbr/gptmbr.bin $TOOLCHAIN/share/syslinux
+    cp efi64/efi/syslinux.efi $TOOLCHAIN/share/syslinux/bootx64.efi
+    cp efi64/com32/elflink/ldlinux/ldlinux.e64  $TOOLCHAIN/share/syslinux
 }
 
 makeinstall_target() {

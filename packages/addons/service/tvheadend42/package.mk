@@ -1,6 +1,6 @@
 ################################################################################
-#      This file is part of LibreELEC - https://LibreELEC.tv
-#      Copyright (C) 2016 Team LibreELEC
+#      This file is part of LibreELEC - https://libreelec.tv
+#      Copyright (C) 2016-present Team LibreELEC
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -17,25 +17,23 @@
 ################################################################################
 
 PKG_NAME="tvheadend42"
-PKG_VERSION="5374573"
-PKG_VERSION_NUMBER="4.1.1945"
-PKG_REV="102"
+PKG_VERSION="407c8a3"
+PKG_VERSION_NUMBER="4.2.3-20"
+PKG_REV="112"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.tvheadend.org"
 PKG_URL="https://github.com/tvheadend/tvheadend/archive/$PKG_VERSION.tar.gz"
 PKG_SOURCE_DIR="tvheadend-${PKG_VERSION}*"
-PKG_DEPENDS_TARGET="toolchain curl libdvbcsa libiconv libressl Python:host yasm"
-PKG_PRIORITY="optional"
+PKG_DEPENDS_TARGET="toolchain curl dvb-tools libdvbcsa libiconv openssl pngquant:host Python:host yasm"
 PKG_SECTION="service"
 PKG_SHORTDESC="Tvheadend: a TV streaming server for Linux"
-PKG_LONGDESC="Tvheadend($PKG_VERSION_NUMBER): is a TV streaming server for Linux supporting DVB-S/S2, DVB-C, DVB-T/T2, IPTV, SAT>IP, ATSC and ISDB-T"
+PKG_LONGDESC="Tvheadend ($PKG_VERSION_NUMBER): is a TV streaming server for Linux supporting DVB-S/S2, DVB-C, DVB-T/T2, IPTV, SAT>IP, ATSC and ISDB-T"
+PKG_AUTORECONF="no"
 
 PKG_IS_ADDON="yes"
-PKG_ADDON_NAME="Tvheadend 4.2"
+PKG_ADDON_NAME="Tvheadend Server 4.2"
 PKG_ADDON_TYPE="xbmc.service"
-PKG_AUTORECONF="no"
-PKG_ADDON_REPOVERSION="8.0"
 
 # transcoding only for generic
 if [ "$TARGET_ARCH" = x86_64 ]; then
@@ -48,35 +46,41 @@ fi
 PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr \
                            --arch=$TARGET_ARCH \
                            --cpu=$TARGET_CPU \
-                           --cc=$TARGET_CC \
+                           --cc=$CC \
                            --disable-avahi \
                            --enable-bundle \
                            --disable-dbus_1 \
                            --enable-dvbcsa \
-                           --disable-dvben50221 \
+                           --enable-dvben50221 \
                            --enable-hdhomerun_client \
                            --enable-hdhomerun_static \
                            --enable-epoll \
                            --enable-inotify \
+                           --enable-pngquant \
                            --disable-nvenc \
                            --disable-uriparser \
                            $TVH_TRANSCODING \
                            --enable-tvhcsa \
+                           --enable-trace \
                            --nowerror \
-                           --python=$ROOT/$TOOLCHAIN/bin/python"
+                           --disable-bintray_cache \
+                           --python=$TOOLCHAIN/bin/python"
 
 post_unpack() {
-  sed -e 's/VER="0.0.0~unknown"/VER="'$PKG_VERSION_NUMBER' ~ LibreELEC Tvh-addon v'$PKG_ADDON_REPOVERSION'.'$PKG_REV'"/g' -i $PKG_BUILD/support/version
+  sed -e 's/VER="0.0.0~unknown"/VER="'$PKG_VERSION_NUMBER' ~ LibreELEC Tvh-addon v'$ADDON_VERSION'.'$PKG_REV'"/g' -i $PKG_BUILD/support/version
+  sed -e 's|'/usr/bin/pngquant'|'$TOOLCHAIN/bin/pngquant'|g' -i $PKG_BUILD/support/mkbundle
 }
 
 pre_configure_target() {
 # fails to build in subdirs
-  cd $ROOT/$PKG_BUILD
+  cd $PKG_BUILD
   rm -rf .$TARGET_NAME
 
 # transcoding
   if [ "$TARGET_ARCH" = x86_64 ]; then
-    export AS=$ROOT/$TOOLCHAIN/bin/yasm
+    export AS=$TOOLCHAIN/bin/yasm
+    export LDFLAGS="$LDFLAGS -lX11 -lm -lvdpau -lva -lva-drm -lva-x11"
+    export ARCH=$TARGET_ARCH
   fi
 
   export CROSS_COMPILE=$TARGET_PREFIX
@@ -86,7 +90,7 @@ pre_configure_target() {
 # transcoding link tvheadend with g++
 if [ "$TARGET_ARCH" = x86_64 ]; then
   pre_make_target() {
-    export CXX=$TARGET_CXX
+    export CXX=$CXX
   }
 fi
 

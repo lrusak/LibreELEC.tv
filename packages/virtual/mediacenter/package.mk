@@ -18,13 +18,11 @@
 
 PKG_NAME="mediacenter"
 PKG_VERSION=""
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://libreelec.tv"
 PKG_URL=""
 PKG_DEPENDS_TARGET="toolchain $MEDIACENTER"
-PKG_PRIORITY="optional"
 PKG_SECTION="virtual"
 PKG_SHORTDESC="Mediacenter: Metapackage"
 PKG_LONGDESC=""
@@ -45,6 +43,10 @@ if [ "$MEDIACENTER" = "kodi" ]; then
                                           pycrypto"
 # other packages
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET LibreELEC-settings \
-                                          xmlstarlet \
-                                          peripheral.joystick"
+                                          xmlstarlet"
+  
+  if [ "$JOYSTICK_SUPPORT" = "yes" ]; then
+    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET peripheral.joystick"
+  fi
+
 fi

@@ -28,7 +28,7 @@ if [ -e /storage/.please_resize_me ] ; then
     rm -f /storage/.please_resize_me
     sync
     echo "Resizing is not permitted - the system has already been initialised."
-    StartProgress countdown "Rebooting in 15s... " 15 "NOW"
+    StartProgress countdown "Rebooting in 5s... " 5 "NOW"
     reboot -f
   fi
 
@@ -51,7 +51,7 @@ if [ -e /storage/.please_resize_me ] ; then
   # just in case
   if [ ! -z "$DISK" -a ! -z "$PART" ] ; then
     # get storage partition start
-    PART_START=$(parted -s -m $DISK unit b print |grep -v ^/dev |grep -v BYT | grep ^2: |  cut -f2 -d ":")
+    PART_START=$(parted -s -m $DISK unit b print 2>/dev/null | grep -v ^/dev | grep -v BYT | grep ^2: |  cut -f2 -d ":")
 
     # failed to get partition start offset ?
     if [ ! -z "$PART_START" ] ; then
@@ -62,13 +62,16 @@ if [ -e /storage/.please_resize_me ] ; then
       echo "Please do not reboot or turn off your @DISTRONAME@ device!"
       echo ""
 
+      # fix any minor issues, such as gpt header not at end of disk
+      StartProgress spinner "Checking layout...   " "sgdisk -e $DISK &>/dev/null"
+
       StartProgress spinner "Deleting /storage... " "parted -s -m $DISK rm 2 &>/dev/null"
-      StartProgress spinner "Creating /storage ..." "parted -s -m $DISK unit b mkpart primary $PART_START 100% &>/dev/null"
+      StartProgress spinner "Creating /storage... " "parted -s -m $DISK unit b mkpart primary $PART_START 100% &>/dev/null"
       StartProgress spinner "Checking /storage... " "e2fsck -f -p $PART &>/dev/null"
       StartProgress spinner "Resizing /storage... " "resize2fs $PART &>/dev/null"
 
-      StartProgress countdown "Rebooting in 15s... " 15 "NOW"
+      StartProgress countdown "Rebooting in 5s... " 5 "NOW"
     fi
   fi
 fi
-reboot -f
+reboot -f &>/dev/null

@@ -17,14 +17,12 @@
 ################################################################################
 
 PKG_NAME="dbus-glib"
-PKG_VERSION="0.106"
-PKG_REV="1"
+PKG_VERSION="0.108"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://freedesktop.org/wiki/Software/dbus"
 PKG_URL="https://dbus.freedesktop.org/releases/dbus-glib/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain dbus glib expat"
-PKG_PRIORITY="optional"
 PKG_SECTION="devel"
 PKG_SHORTDESC="dbus-glib: A message bus system"
 PKG_LONGDESC="D-BUS is a message bus, used for sending messages between applications. Conceptually, it fits somewhere in between raw sockets and CORBA in terms of complexity."

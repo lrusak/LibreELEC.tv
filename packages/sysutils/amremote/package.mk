@@ -17,14 +17,12 @@
 ################################################################################
 
 PKG_NAME="amremote"
-PKG_VERSION="ecdf401"
-PKG_REV="1"
-PKG_ARCH="arm"
+PKG_VERSION="6431040"
+PKG_ARCH="arm aarch64"
 PKG_LICENSE="other"
 PKG_SITE="http://www.amlogic.com"
 PKG_URL="https://github.com/codesnake/amremote/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain usbutils"
-PKG_PRIORITY="optional"
 PKG_SECTION="sysutils/remote"
 PKG_SHORTDESC="amremote - IR remote configuration utility for Amlogic-based devices"
 PKG_LONGDESC="amremote - IR remote configuration utility for Amlogic-based devices"

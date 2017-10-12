@@ -18,19 +18,17 @@
 
 PKG_NAME="encodings"
 PKG_VERSION="1.0.4"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.X.org"
 PKG_URL="http://xorg.freedesktop.org/archive/individual/font/$PKG_NAME-$PKG_VERSION.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain util-macros font-util:host"
-PKG_PRIORITY="optional"
 PKG_SECTION="x11/font"
 PKG_SHORTDESC="encodings: X font encodings"
 PKG_LONGDESC="X font encoding meta files."
 
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="yes"
+PKG_AUTORECONF="no"
 
 PKG_CONFIGURE_OPTS_TARGET="--enable-gzip-small-encodings \
                            --enable-gzip-large-encodings \

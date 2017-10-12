@@ -18,13 +18,11 @@
 
 PKG_NAME="mesa-demos"
 PKG_VERSION="8.3.0"
-PKG_REV="0"
 PKG_ARCH="i386 x86_64"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.mesa3d.org/"
 PKG_URL="ftp://ftp.freedesktop.org/pub/mesa/demos/$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain libX11 mesa glu glew"
-PKG_PRIORITY="optional"
 PKG_SECTION="tools"
 PKG_SHORTDESC="mesa-demos: Mesa 3D demos"
 PKG_LONGDESC="Mesa 3D demos - installed are the well known glxinfo and glxgears."

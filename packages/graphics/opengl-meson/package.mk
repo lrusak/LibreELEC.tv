@@ -17,7 +17,6 @@
 ################################################################################
 
 PKG_NAME="opengl-meson"
-PKG_REV="1"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="nonfree"
 PKG_SITE="http://openlinux.amlogic.com:8000/download/ARM/filesystem/"
@@ -29,12 +28,15 @@ case $MESON_FAMILY in
     PKG_VERSION="6-r5p1-01rel0-armhf"
     ;;
   gxbb)
-    PKG_VERSION="gxbb-r5p1-01rel0"
+    if [ $TARGET_ARCH = "arm" ]; then
+      PKG_VERSION="8-r5p1-01rel0-armhf"
+    else
+      PKG_VERSION="gxbb-r5p1-01rel0"
+    fi
     ;;
 esac
 PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_PRIORITY="optional"
 PKG_SECTION="graphics"
 PKG_SHORTDESC="opengl-meson: OpenGL ES pre-compiled libraries for Mali GPUs found in Amlogic Meson SoCs"
 PKG_LONGDESC="opengl-meson: OpenGL ES pre-compiled libraries for Mali GPUs found in Amlogic Meson SoCs. The libraries could be found in a Linux buildroot released by Amlogic at http://openlinux.amlogic.com:8000/download/ARM/filesystem/. See the opengl package."

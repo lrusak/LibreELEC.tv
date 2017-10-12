@@ -1,0 +1,76 @@
+#!/bin/sh
+
+################################################################################
+#      This file is part of LibreELEC - https://libreelec.tv
+#      Copyright (C) 2016-present Team LibreELEC
+#
+#  LibreELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  LibreELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
+
+. /etc/profile
+
+oe_setup_addon service.minisatip
+
+chmod a+x $ADDON_DIR/bin/*
+
+# wait for dvb card
+if [ "$WAIT_FOR_FEINIT" == "true" ] ; then
+  while [ true ] ; do
+    if [ -e /dev/dvb/adapter$((NUM_ADAPTERS-1))/frontend0 ] ; then
+      break
+    fi
+    sleep 1
+  done
+fi
+
+# sleep for x seconds
+if [ "$WORKAROUND_SLEEP" == "true" ] ; then
+  sleep $WORKAROUND_SLEEP_TIME
+fi
+
+
+## options
+
+# debug log
+if [ "$DEBUG" == "true" ] ; then
+  MINISATIP_ARG="-l -l -l"
+fi
+
+# simulate x adapters on this box
+if [ "$MINISATIP_TESTMODE" == "true" ] ; then
+  MINISATIP_ARG="$MINISATIP_ARG -a 2:2:2"
+fi
+
+# RTSP over TCP instead of UDP
+if [ "$MINISATIP_SATIP_TCP" == "true" ] ; then
+  MINISATIP_ARG="$MINISATIP_ARG -O"
+fi
+
+# clean the PSI from all CA information
+if [ "$MINISATIP_CLEANPSI" == "true" ] ; then
+  MINISATIP_ARG="$MINISATIP_ARG -t"
+fi
+
+# port for listening for rtsp requests
+if [ "$MINISATIP_RTSP_PORT" != "554" ] ; then
+  MINISATIP_ARG="$MINISATIP_ARG -y $MINISATIP_RTSP_PORT"
+fi
+
+# specify the hostname and port for the dvbapi server (oscam)
+if [ "$MINISATIP_DVBAPI" == "true" ] ; then
+  MINISATIP_ARG="$MINISATIP_ARG -o ${MINISATIP_DVBAPI_IP}:${MINISATIP_DVBAPI_PORT}"
+fi
+
+echo "Minisatip was started with this settings: $MINISATIP_ARG" > $ADDON_LOG_FILE
+exec $ADDON_DIR/bin/minisatip -f -x 9090 -R /storage/.kodi/addons/service.minisatip/webif $MINISATIP_ARG 2>&1 >> $ADDON_LOG_FILE

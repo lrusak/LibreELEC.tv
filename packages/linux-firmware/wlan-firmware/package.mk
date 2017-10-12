@@ -17,14 +17,12 @@
 ################################################################################
 
 PKG_NAME="wlan-firmware"
-PKG_VERSION="0.0.31"
-PKG_REV="1"
+PKG_VERSION="34a47d9"
 PKG_ARCH="any"
 PKG_LICENSE="Free-to-use"
-PKG_SITE="https://github.com/OpenELEC/wlan-firmware"
-PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_SITE="https://github.com/LibreELEC/wlan-firmware"
+PKG_URL="https://github.com/LibreELEC/wlan-firmware/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_PRIORITY="optional"
 PKG_SECTION="firmware"
 PKG_SHORTDESC="wlan-firmware: firmwares for various WLAN drivers"
 PKG_LONGDESC="wlan-firmware: firmwares for various WLAN drivers"
@@ -37,5 +35,5 @@ make_target() {
 }
 
 makeinstall_target() {
-  DESTDIR=$INSTALL ./install
+  DESTDIR=$INSTALL/usr ./install
 }

@@ -18,14 +18,12 @@
 
 PKG_NAME="efivar"
 PKG_VERSION="70e63d4" # 0.15 # Todo: later versions with buildproblems
-PKG_REV="0"
 PKG_ARCH="x86_64"
 PKG_LICENSE="LGPL"
 PKG_SITE="https://github.com/vathpela/efivar"
 PKG_URL="https://github.com/vathpela/efivar-devel/archive/$PKG_VERSION.tar.gz"
 PKG_SOURCE_DIR="efivar-devel-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain efivar:host"
-PKG_PRIORITY="optional"
 PKG_SECTION="tools"
 PKG_SHORTDESC="evivar: maniulate EFI Variables"
 PKG_LONGDESC="Tools and library to manipulate EFI variables."

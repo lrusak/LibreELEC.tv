@@ -18,13 +18,11 @@
 
 PKG_NAME="libplist"
 PKG_VERSION="1.12"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://matt.colyer.name/projects/iphone-linux/"
 PKG_URL="http://www.libimobiledevice.org/downloads/$PKG_NAME-$PKG_VERSION.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain libxml2 glib"
-PKG_PRIORITY="optional"
 PKG_SECTION="devel"
 PKG_SHORTDESC="libplist: a library for manipulating Apple Binary and XML Property Lists"
 PKG_LONGDESC="libplist is a library for manipulating Apple Binary and XML Property Lists"

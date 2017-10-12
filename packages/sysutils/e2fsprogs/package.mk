@@ -17,34 +17,29 @@
 ################################################################################
 
 PKG_NAME="e2fsprogs"
-PKG_VERSION="1.42.13"
-PKG_REV="1"
+PKG_VERSION="1.43.4"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://e2fsprogs.sourceforge.net/"
 PKG_URL="$SOURCEFORGE_SRC/$PKG_NAME/$PKG_NAME/1.42/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_DEPENDS_INIT="toolchain"
-PKG_PRIORITY="optional"
 PKG_SECTION="tools"
 PKG_SHORTDESC="e2fsprogs: Utilities for use with the ext2 filesystem"
 PKG_LONGDESC="The filesystem utilities for the EXT2 filesystem, including e2fsck, mke2fs, dumpe2fs, fsck, and others."
 PKG_IS_ADDON="no"
 
-PKG_AUTORECONF="yes"
+PKG_AUTORECONF="no"
 
 if [ "$HFSTOOLS" = "yes" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET diskdev_cmds"
 fi
 
-PKG_CONFIGURE_OPTS_HOST="--prefix=/usr \
-                         --bindir=/bin \
-                         --sbindir=/sbin"
+PKG_CONFIGURE_OPTS_HOST="--prefix=$TOOLCHAIN/ \
+                         --bindir=$TOOLCHAIN/bin \
+                         --sbindir=$TOOLCHAIN/sbin"
 
 PKG_CONFIGURE_OPTS_TARGET="BUILD_CC=$HOST_CC \
-                           --prefix=/usr \
-                           --bindir=/bin \
-                           --sbindir=/sbin \
                            --enable-verbose-makecmds \
                            --enable-symlink-install \
                            --enable-symlink-build \
@@ -67,6 +62,7 @@ PKG_CONFIGURE_OPTS_TARGET="BUILD_CC=$HOST_CC \
                            --disable-uuidd \
                            --disable-nls \
                            --disable-rpath \
+                           --disable-fuse2fs \
                            --with-gnu-ld"
 
 PKG_CONFIGURE_OPTS_INIT="$PKG_CONFIGURE_OPTS_TARGET"
@@ -77,32 +73,34 @@ pre_make_host() {
 }
 
 post_makeinstall_target() {
-  rm -rf $INSTALL/sbin/badblocks
-  rm -rf $INSTALL/sbin/blkid
-  rm -rf $INSTALL/sbin/dumpe2fs
-  rm -rf $INSTALL/sbin/e2freefrag
-  rm -rf $INSTALL/sbin/e2undo
-  rm -rf $INSTALL/sbin/e4defrag
-  rm -rf $INSTALL/sbin/filefrag
-  rm -rf $INSTALL/sbin/fsck
-  rm -rf $INSTALL/sbin/logsave
-  rm -rf $INSTALL/sbin/mklost+found
+  make -C lib/et LIBMODE=644 DESTDIR=$SYSROOT_PREFIX install
+
+  rm -rf $INSTALL/usr/sbin/badblocks
+  rm -rf $INSTALL/usr/sbin/blkid
+  rm -rf $INSTALL/usr/sbin/dumpe2fs
+  rm -rf $INSTALL/usr/sbin/e2freefrag
+  rm -rf $INSTALL/usr/sbin/e2undo
+  rm -rf $INSTALL/usr/sbin/e4defrag
+  rm -rf $INSTALL/usr/sbin/filefrag
+  rm -rf $INSTALL/usr/sbin/fsck
+  rm -rf $INSTALL/usr/sbin/logsave
+  rm -rf $INSTALL/usr/sbin/mklost+found
 }
 
 makeinstall_init() {
-  mkdir -p $INSTALL/sbin
-    cp e2fsck/e2fsck $INSTALL/sbin
-    ln -sf e2fsck $INSTALL/sbin/fsck.ext2
-    ln -sf e2fsck $INSTALL/sbin/fsck.ext3
-    ln -sf e2fsck $INSTALL/sbin/fsck.ext4
-    ln -sf e2fsck $INSTALL/sbin/fsck.ext4dev
+  mkdir -p $INSTALL/usr/sbin
+    cp e2fsck/e2fsck $INSTALL/usr/sbin
+    ln -sf e2fsck $INSTALL/usr/sbin/fsck.ext2
+    ln -sf e2fsck $INSTALL/usr/sbin/fsck.ext3
+    ln -sf e2fsck $INSTALL/usr/sbin/fsck.ext4
+    ln -sf e2fsck $INSTALL/usr/sbin/fsck.ext4dev
 
   if [ $INITRAMFS_PARTED_SUPPORT = "yes" ]; then
-    cp misc/mke2fs $INSTALL/sbin
-    ln -sf mke2fs $INSTALL/sbin/mkfs.ext2
-    ln -sf mke2fs $INSTALL/sbin/mkfs.ext3
-    ln -sf mke2fs $INSTALL/sbin/mkfs.ext4
-    ln -sf mke2fs $INSTALL/sbin/mkfs.ext4dev
+    cp misc/mke2fs $INSTALL/usr/sbin
+    ln -sf mke2fs $INSTALL/usr/sbin/mkfs.ext2
+    ln -sf mke2fs $INSTALL/usr/sbin/mkfs.ext3
+    ln -sf mke2fs $INSTALL/usr/sbin/mkfs.ext4
+    ln -sf mke2fs $INSTALL/usr/sbin/mkfs.ext4dev
   fi
 }
 
@@ -112,12 +110,7 @@ make_host() {
 }
 
 makeinstall_host() {
-  make -C lib/et DESTDIR=$(pwd)/.install install
-  make -C lib/ext2fs DESTDIR=$(pwd)/.install install
-
-  rm -fr $(pwd)/.install/bin
-  rm -fr $(pwd)/.install/usr/share
-
-  cp -Pa $(pwd)/.install/usr/* $ROOT/$TOOLCHAIN
+  make -C lib/et LIBMODE=644 install
+  make -C lib/ext2fs LIBMODE=644 install
 }
 

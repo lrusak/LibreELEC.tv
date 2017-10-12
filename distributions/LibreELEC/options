@@ -1,3 +1,9 @@
+# LTO (Link Time Optimization) support
+  LTO_SUPPORT="yes"
+
+# GOLD (Google Linker) support
+  GOLD_SUPPORT="yes"
+
 # Name of the Distro to build (full name, without special characters)
   DISTRONAME="LibreELEC"
 
@@ -6,8 +12,8 @@
 
 # Welcome Message for e.g. SSH Server (up to 5 Lines)
   GREETING0="##############################################"
-  GREETING1="#                 LibreELEC                  #"
-  GREETING2="#            http://libreelec.tv             #"
+  GREETING1="#                  LibreELEC                 #"
+  GREETING2="#            https://libreelec.tv            #"
   GREETING3="##############################################"
   GREETING4=""
 
@@ -124,22 +130,19 @@
 # build and install hfs filesystem utilities (yes / no)
   HFSTOOLS="yes"
 
-# Windowmanager to use (ratpoison / fluxbox / none)
+# Windowmanager to use (fluxbox / none)
   WINDOWMANAGER="fluxbox"
 
 # Xorg Graphic drivers to use (all / i915,i965,r200,r300,r600,nvidia)
 # Space separated list is supported,
 # e.g. GRAPHIC_DRIVERS="i915 i965 r300 r600 radeonsi nvidia"
-  GRAPHIC_DRIVERS="r300 r600 radeonsi i915 i965 nvidia nvidia-legacy"
+  GRAPHIC_DRIVERS="r300 r600 radeonsi i915 i965 nvidia nvidia-legacy vmware"
 
 # build and install remote support (yes / no)
   REMOTE_SUPPORT="yes"
 
 # build and install ATV IR remote support (yes / no)
   ATVCLIENT_SUPPORT="yes"
-
-# build and install IRServer IR/LCD support (yes / no)
-  IRSERVER_SUPPORT="yes"
 
 # build and install Joystick support (yes / no)
   JOYSTICK_SUPPORT="yes"
@@ -150,31 +153,18 @@
 # build and install iSCSI support - iscsistart (yes / no)
   ISCSI_SUPPORT="yes"
 
-# LCD driver to Use - Possible drivers are ( Comma seperated:
-# bayrad,CFontz,CFontz633,CFontzPacket,curses,CwLnx,dm140,
-# ea65,EyeboxOne,g15,glcd,glcdlib,glk,hd44780,i2500vfd,
-# icp_a106,imon,imonlcd,IOWarrior,irman,irtrans,
-# joy,lb216,lcdm001,lcterm,lirc,lis,MD8800,mdm166a,
-# ms6931,mtc_s16209x,MtxOrb,mx5000,NoritakeVFD,
-# picolcd,pyramid,sed1330,sed1520,serialPOS,
-# serialVFD,shuttleVFD,sli,stv5730,SureElec,svga,vlsys_m428
-# 'all' compiles all drivers;
-# 'all,!xxx,!yyy' de-selects previously selected drivers
-# "none" for disable LCD support
-  LCD_DRIVER="irtrans,imon,imonlcd,mdm166a,MtxOrb,lis,dm140,hd44780,CFontz,SureElec,vlsys_m428,serialVFD,shuttleVFD"
-
 # Support for partitioning and formating disks in initramfs (yes / no)
 # This adds support for parted and mkfs.ext3/4 to initramfs for OEM usage
   INITRAMFS_PARTED_SUPPORT="no"
 
 # build with swap support (yes / no)
-  SWAP_SUPPORT="no"
+  SWAP_SUPPORT="yes"
 
 # swap support enabled per default (yes / no)
   SWAP_ENABLED_DEFAULT="no"
 
 # swapfile size if SWAP_SUPPORT=yes in MB
-  SWAPFILESIZE="256"
+  SWAPFILESIZE="128"
 
 # build with installer (yes / no)
   INSTALLER_SUPPORT="yes"
@@ -205,4 +195,4 @@
 # Default size of system partition, in MB, eg. 512
   SYSTEM_SIZE=512
 # Default system partition offset, in sectors, eg. 2048
-  SYSTEM_PART_START=2048
+  SYSTEM_PART_START=8192

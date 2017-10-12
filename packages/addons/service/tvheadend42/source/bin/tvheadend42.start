@@ -1,8 +1,8 @@
 #!/bin/sh
 
 ################################################################################
-#      This file is part of LibreELEC - https://LibreELEC.tv
-#      Copyright (C) 2016 Team LibreELEC
+#      This file is part of LibreELEC - https://libreelec.tv
+#      Copyright (C) 2016-present Team LibreELEC
 #
 #  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -44,6 +44,19 @@ XMLTV_FILE="$ADDON_DIR/bin/tv_grab_file"
 
 chmod a+x $ADDON_DIR/bin/*
 
+# workaround to support old 4.1.x version upgrade for Tvh after 4.1.2369
+if [ -f "$ADDON_HOME/dvr/config/dvr-config" ]; then
+  rm $ADDON_HOME/dvr/config/dvr-config
+fi
+
+if [ -f "$ADDON_HOME/channel/config/config.tmp" ]; then
+  rm $ADDON_HOME/channel/config/config.tmp
+fi
+
+if [ -f "$ADDON_HOME/channel/config/tag.tmp" ]; then
+  rm $ADDON_HOME/channel/config/tag.tmp
+fi
+
 # copy config files to userdata
 if [ ! -f "$DVR_SETTINGS_FILE" ]; then
   mkdir -p $DVR_SETTINGS_DIR
@@ -71,15 +84,74 @@ if [ ! -f "$XMLTV_SETTINGS_FILE" ]; then
   cp $ADDON_DIR/defaults/xmltv/config $XMLTV_SETTINGS_FILE
 fi
 
-# options
-if [ "$WORKAROUND_SLEEP" == "true" ] ; then
+# delayed Tvh startup
+if [ "$WORKAROUND_SLEEP" == "true" ]; then
   sleep $WORKAROUND_SLEEP_TIME
 fi
 
-if [ "$DEBUG" = "yes" ]; then
-  TVHEADEND_ARG="-B -C -s -u root -g video -c $ADDON_HOME"
+# support FritzBox Sat>IP Server detection workaround for AVM-Repeater and AVM-6490
+if [ "$AVM_SATIP_SERVER" == "true" ]; then
+  if [ "$AVM_DEVICE" == "AVM_Repeater" ]; then
+    AVM_SATIP="--satip_xml http://${AVM_ROUTER_IP}:49000/satipdesc.xml"
+  fi
+  if [ "$AVM_DEVICE" == "AVM_6490" ]; then
+    AVM_SATIP="--satip_xml http://${AVM_ROUTER_FAKE_IP}:49000/satipdesc.xml"
+    AVM_NUM="4"
+  fi
+
+  # add virtual ip as workaround for AVM limitation of one stream per ip
+  # AVM-Repeater (2 tuners)
+  ip address add ${AVM_IP1}/24 dev $AVM_ETH
+  ip address add ${AVM_IP2}/24 dev $AVM_ETH
+
+  # AVM-6490 (4 tuners)
+  if [ "$AVM_NUM" = "4" ]; then
+    ip address add ${AVM_IP3}/24 dev $AVM_ETH
+    ip address add ${AVM_IP4}/24 dev $AVM_ETH
+  fi
+fi
+
+# custom startup parameters
+if [ "$CUSTOM_START" != "true" ]; then
+  CUSTOM_ARGS=""
+fi
+
+# debug value generation
+if [ "$DEBUG_LOG_TRACE_1" != "NONE" ]; then
+  DEBUG_LOG_ARG="$DEBUG_LOG_TRACE_1"
+fi
+
+if [ "$DEBUG_LOG_TRACE_2" != "NONE" ]; then
+  DEBUG_LOG_ARG="$DEBUG_LOG_ARG,$DEBUG_LOG_TRACE_2"
+fi
+
+if [ "$DEBUG_LOG_TRACE_3" != "NONE" ]; then
+  DEBUG_LOG_ARG="$DEBUG_LOG_ARG,$DEBUG_LOG_TRACE_3"
+fi
+
+if [ "$DEBUG_LOG_TRACE_4" != "NONE" ]; then
+  DEBUG_LOG_ARG="$DEBUG_LOG_ARG,$DEBUG_LOG_TRACE_4"
+fi
+
+if [ "$DEBUG_LOG_TRACE_5" != "NONE" ]; then
+  DEBUG_LOG_ARG="$DEBUG_LOG_ARG,$DEBUG_LOG_TRACE_5"
+fi
+
+# if debuglog is activated and nothing selected to trace
+if [ -z "$DEBUG_LOG_ARG" ];then
+  DEBUG_LOG_ARG="all"
+fi
+
+# rename debuglog if already exist to prevent overwriting after crash
+if [ -f "${DEBUG_LOG_PATH}" ]; then
+  cp ${DEBUG_LOG_PATH} ${DEBUG_LOG_PATH}_$(date '+%Y-%m-%d_%H.%M.%S').txt
+fi
+
+# debug commandline
+if [ "$DEBUG_LOG" = "true" ]; then
+  TVHEADEND_ARG="-B -C -u root -g video -c $ADDON_HOME $AVM_SATIP $CUSTOM_ARGS -l ${DEBUG_LOG_PATH} --trace $DEBUG_LOG_ARG"
 else
-  TVHEADEND_ARG="-B -C -u root -g video -c $ADDON_HOME"
+  TVHEADEND_ARG="-B -C -u root -g video -c $ADDON_HOME $AVM_SATIP $CUSTOM_ARGS"
 fi
 
 # start userspace DVB driver/addon

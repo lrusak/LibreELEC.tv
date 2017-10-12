@@ -17,25 +17,25 @@
 ################################################################################
 
 PKG_NAME="script.config.vdr"
-PKG_VERSION="1.1.3"
+PKG_VERSION="61c2dde"
 PKG_REV="100"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
 PKG_SITE="https://libreelec.tv"
 PKG_URL="https://github.com/LibreELEC/script.config.vdr/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET=""
-PKG_PRIORITY="optional"
 PKG_SECTION=""
 PKG_SHORTDESC="script.config.vdr"
 PKG_LONGDESC="script.config.vdr"
+PKG_AUTORECONF="no"
 
 PKG_IS_ADDON="yes"
 PKG_ADDON_TYPE="dummy"
-PKG_AUTORECONF="no"
-PKG_ADDON_REPOVERSION="8.0"
 
 make_target() {
-  : # nothing to do here
+  $SED -e "s|@ADDON_VERSION@|$ADDON_VERSION.$PKG_REV|g" \
+       -e "s|@OS_VERSION@|$OS_VERSION|g" \
+       -i addon.xml
 }
 
 makeinstall_target() {
@@ -45,4 +45,6 @@ makeinstall_target() {
 addon() {
   mkdir -p $ADDON_BUILD/$PKG_ADDON_ID
   cp -PR $PKG_BUILD/* $ADDON_BUILD/$PKG_ADDON_ID
+  cp $PKG_DIR/changelog.txt $ADDON_BUILD/$PKG_ADDON_ID
+  cp $PKG_DIR/icon/icon.png $ADDON_BUILD/$PKG_ADDON_ID/resources
 }

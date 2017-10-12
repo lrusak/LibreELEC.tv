@@ -44,11 +44,21 @@ fi
     fi
   done
 
+if [ -f $SYSTEM_ROOT/usr/share/bootloader/boot-logo.bmp.gz ]; then
+  echo "*** updating boot logo ..."
+  cp -p $SYSTEM_ROOT/usr/share/bootloader/boot-logo.bmp.gz $BOOT_ROOT
+fi
+
 echo "*** updating u-boot for Odroid on: $BOOT_DISK ..."
 
-dd if=$SYSTEM_ROOT/usr/share/bootloader/bl1 of=$BOOT_DISK conv=fsync bs=1 count=442
-dd if=$SYSTEM_ROOT/usr/share/bootloader/bl1 of=$BOOT_DISK conv=fsync bs=512 seek=1 skip=1
-dd if=$SYSTEM_ROOT/usr/share/bootloader/u-boot of=$BOOT_DISK conv=fsync bs=512 seek=97
+dd if=$SYSTEM_ROOT/usr/share/bootloader/u-boot of=$BOOT_DISK conv=fsync bs=1 count=112
+dd if=$SYSTEM_ROOT/usr/share/bootloader/u-boot of=$BOOT_DISK conv=fsync bs=512 skip=1 seek=1
+
+# monkey patch boot.ini for updated kernel
+  sed -i 's|setenv odroidp1 "no_console_suspend hdmimode=${video_output} m_bpp=${video_bpp} vout=${video_mode}"|setenv odroidp1 "no_console_suspend logo=${logoopt} vout=${outputmode},enable hdmimode=${hdmimode} cvbsmode=nocvbs"|' /flash/boot.ini
+  sed -i 's|setenv odroidp2 "${disableuhs} consoleblank=0|setenv odroidp2 "mac=${ethaddr} consoleblank=0|' /flash/boot.ini
+  sed -i 's|setenv bootcmd "${kernel}; ${dtb}; ${timer}; ${bootseq}"|setenv bootcmd "${kernel}; ${dtb}; ${bootseq}"|' /flash/boot.ini
+  sed -i 's|setenv bootargs "${console} ${bootrootfs} ${odroid} ${cec} ${hpd} ${dac} ${libreelec}"|setenv bootargs "${console} ${bootrootfs} ${odroid} ${cec} ${libreelec}"|' /flash/boot.ini
 
 # mount $BOOT_ROOT r/o
   sync

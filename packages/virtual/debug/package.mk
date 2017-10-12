@@ -18,13 +18,11 @@
 
 PKG_NAME="debug"
 PKG_VERSION=""
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.openelec.tv"
 PKG_URL=""
 PKG_DEPENDS_TARGET="toolchain gdb"
-PKG_PRIORITY="optional"
 PKG_SECTION="virtual"
 PKG_SHORTDESC="debug: Metapackage for installing debugging tools"
 PKG_LONGDESC="debug is a Metapackage for installing debugging tools"
@@ -39,3 +37,6 @@ if [ "$VDPAU_SUPPORT" = "yes" -a "$DISPLAYSERVER" = "x11" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET vdpauinfo"
 fi
 
+if [ "$DEBUG" = "yes" -a "$VALGRIND" = "yes" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET valgrind"
+fi

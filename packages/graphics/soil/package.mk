@@ -18,13 +18,11 @@
 
 PKG_NAME="soil"
 PKG_VERSION="1.16"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="CCPL"
 PKG_SITE="http://www.lonesock.net/soil.html"
 PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain mesa"
-PKG_PRIORITY="optional"
 PKG_SECTION="graphics"
 PKG_SHORTDESC="A tiny C lib primarily for loading textures into OpenGL"
 PKG_LONGDESC="A tiny C lib primarily for loading textures into OpenGL"

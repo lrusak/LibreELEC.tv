@@ -18,13 +18,11 @@
 
 PKG_NAME="glu"
 PKG_VERSION="9.0.0"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
 PKG_SITE="http://cgit.freedesktop.org/mesa/glu/"
 PKG_URL="http://cgit.freedesktop.org/mesa/glu/snapshot/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_PRIORITY="optional"
 PKG_SECTION="graphics"
 PKG_SHORTDESC="glu: The OpenGL utility library"
 PKG_LONGDESC="libglu is the The OpenGL utility library"

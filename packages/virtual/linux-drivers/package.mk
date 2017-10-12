@@ -18,13 +18,11 @@
 
 PKG_NAME="linux-drivers"
 PKG_VERSION=""
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.openelec.tv"
 PKG_URL=""
 PKG_DEPENDS_TARGET="toolchain $ADDITIONAL_DRIVERS"
-PKG_PRIORITY="optional"
 PKG_SECTION="virtual"
 PKG_SHORTDESC="linux-drivers: Meta package to install additional drivers"
 PKG_LONGDESC="linux-drivers is a Meta package to install additional drivers"

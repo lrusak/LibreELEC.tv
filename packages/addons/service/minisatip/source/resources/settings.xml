@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="Hardware">
+		<setting id="WAIT_FOR_FEINIT" type="bool" label="Wait for frontend initialization" default="false" />
+		<setting id="NUM_ADAPTERS" type="slider" range="1,16" option="int" label="Number of adapters to wait for" default="1" enable="eq(-1,true)" />
+		<setting id="REMOVE_MODULES" type="text" label="Unload DVB modules before suspend" values="" default=""/>
+		<setting id="WORKAROUND_SLEEP" type="bool" label="Delay the start of Minisatip" default="false" />
+		<setting id="WORKAROUND_SLEEP_TIME" type="slider" range="1,30" option="int" label="time (s)" default="1" enable="eq(-1,true)" />
+    </category>
+    <category label="Minisatip">
+		<setting id="MINISATIP_SATIP-TCP" type="bool" label="RTSP over TCP instead of UDP" default="false" />
+		<setting id="MINISATIP_CLEANPSI" type="bool" label="Clean the PSI from all CA information" default="false" />
+		<setting id="MINISATIP_DVBAPI_IP" type="ipaddress" label="Specify the hostname for the dvbapi server (oscam)" default="127.0.0.1" enable="eq(-1,true)" />
+		<setting id="MINISATIP_DVBAPI_PORT" type="text" label="Specify the port for the dvbapi server (oscam)" default="9000" enable="eq(-2,true)" />
+		<setting id="MINISATIP_RTSP_PORT" type="text" label="Port for listening for rtsp requests" default="554" />
+    </category>
+    <category label="Debugging">
+		<setting id="DEBUG" type="bool" label="Debug Log" default="false" />
+		<setting id="MINISATIP_TESTMODE" type="bool" label="Simulate DVB adapters on this box" default="false" />
+    </category>
+</settings>

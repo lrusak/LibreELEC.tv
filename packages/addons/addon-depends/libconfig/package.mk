@@ -18,13 +18,11 @@
 
 PKG_NAME="libconfig"
 PKG_VERSION="1.5"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="LGPL"
 PKG_SITE="http://hyperrealm.com/libconfig/libconfig.html"
 PKG_URL="https://github.com/hyperrealm/libconfig/archive/v$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_PRIORITY="optional"
 PKG_SECTION="lib"
 PKG_SHORTDESC="C/C++ Configuration File Library"
 PKG_LONGDESC="C/C++ Configuration File Library"

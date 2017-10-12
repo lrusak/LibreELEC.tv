@@ -17,14 +17,12 @@
 ################################################################################
 
 PKG_NAME="pciutils"
-PKG_VERSION="3.4.1"
-PKG_REV="1"
+PKG_VERSION="3.5.2"
 PKG_ARCH="x86_64"
 PKG_LICENSE="GPL"
 PKG_SITE="http://mj.ucw.cz/pciutils.shtml"
 PKG_URL="http://www.kernel.org/pub/software/utils/pciutils/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain kmod systemd"
-PKG_PRIORITY="optional"
 PKG_SECTION="system"
 PKG_SHORTDESC="pciutils: Linux PCI Utilities"
 PKG_LONGDESC="This package contains various utilities for inspecting and setting of devices connected to the PCI bus and the PCI vendor/product ID database."

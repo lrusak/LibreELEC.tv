@@ -17,20 +17,18 @@
 ################################################################################
 
 PKG_NAME="libXi"
-PKG_VERSION="1.7.6"
-PKG_REV="1"
+PKG_VERSION="1.7.8"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.x.org/"
 PKG_URL="http://xorg.freedesktop.org/archive/individual/lib/$PKG_NAME-$PKG_VERSION.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain util-macros libX11 inputproto libXfixes"
-PKG_PRIORITY="optional"
 PKG_SECTION="x11/lib"
 PKG_SHORTDESC="libxi: X11 Input extension library"
 PKG_LONGDESC="LibXi provides an X Window System client interface to the XINPUT extension to the X protocol."
 
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="yes"
+PKG_AUTORECONF="no"
 
 PKG_CONFIGURE_OPTS_TARGET="--enable-static --disable-shared \
                            --enable-malloc0returnsnull \

@@ -18,13 +18,11 @@
 
 PKG_NAME="gpu-viv-g2d"
 PKG_VERSION="3.10.17-1.0.2"
-PKG_REV="1"
 PKG_ARCH="arm"
 PKG_LICENSE="nonfree"
 PKG_SITE="http://www.freescale.com"
 PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_PRIORITY="optional"
 PKG_SECTION="graphics"
 PKG_SHORTDESC="gpu-viv-g2d: Another vivante Binary for performant resizing"
 PKG_LONGDESC="gpu-viv-g2d: Another vivante Binary for performant resizing"

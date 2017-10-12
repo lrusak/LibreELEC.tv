@@ -1,2 +1,11 @@
-8.0.100
+103
+- Update to 2.2
+
+102
+- Update to 2.1
+
+101
+- Update to 2.0
+
+100
 - Initial addon

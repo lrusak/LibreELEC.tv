@@ -18,13 +18,11 @@
 
 PKG_NAME="autoconf-archive"
 PKG_VERSION="2015.09.25"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="http://ftp.gnu.org/gnu/autoconf-archive"
-PKG_URL="http://ftp.gnu.org/gnu/autoconf-archive/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_SITE="https://www.gnu.org/software/autoconf-archive/"
+PKG_URL="http://ftpmirror.gnu.org/autoconf-archive/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_HOST="ccache:host"
-PKG_PRIORITY="optional"
 PKG_SECTION="toolchain/devel"
 PKG_SHORTDESC="autoconf-archive: macros for autoconf"
 PKG_LONGDESC="autoconf-archive is an package of m4 macros"
@@ -32,7 +30,7 @@ PKG_LONGDESC="autoconf-archive is an package of m4 macros"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-PKG_CONFIGURE_OPTS_HOST="--target=$TARGET_NAME --prefix=$ROOT/$TOOLCHAIN"
+PKG_CONFIGURE_OPTS_HOST="--target=$TARGET_NAME --prefix=$TOOLCHAIN"
 
 makeinstall_host() {
 # make install

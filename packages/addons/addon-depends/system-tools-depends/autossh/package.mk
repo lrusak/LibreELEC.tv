@@ -18,13 +18,11 @@
 
 PKG_NAME="autossh"
 PKG_VERSION="1.4e"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.harding.motd.ca/"
 PKG_URL="http://www.harding.motd.ca/autossh/${PKG_NAME}-${PKG_VERSION}.tgz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_PRIORITY="optional"
 PKG_SECTION="tools"
 PKG_SHORTDESC="ssh tool"
 PKG_LONGDESC="SSH tool to keep alive tunnels"

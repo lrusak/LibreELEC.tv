@@ -18,13 +18,11 @@
 
 PKG_NAME="ftgl"
 PKG_VERSION="2.1.2"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://sourceforge.net/projects/ftgl/"
 PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain freetype"
-PKG_PRIORITY="optional"
 PKG_SECTION="multimedia"
 PKG_SHORTDESC="ftgl:"
 PKG_LONGDESC="ftgl:"
@@ -32,8 +30,4 @@ PKG_LONGDESC="ftgl:"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-configure_target() {
-  cmake -DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF \
-        -DOUTPUT_DIR=$SYSROOT_PREFIX/usr \
-        ..
-}
+PKG_CMAKE_OPTS_TARGET="-DOUTPUT_DIR=$SYSROOT_PREFIX/usr"

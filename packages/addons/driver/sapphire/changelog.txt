@@ -1,0 +1,8 @@
+102
+- Rebuild driver against 4.8 kernel
+
+101
+- Rebuild driver against 4.7 kernel
+
+100
+- Initial add-on

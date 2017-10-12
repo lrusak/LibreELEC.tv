@@ -17,14 +17,12 @@
 ################################################################################
 
 PKG_NAME="bcm2835-bootloader"
-PKG_VERSION="c5e1319"
-PKG_REV="1"
+PKG_VERSION="756dd85"
 PKG_ARCH="arm"
 PKG_LICENSE="nonfree"
 PKG_SITE="http://www.broadcom.com"
 PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain linux"
-PKG_PRIORITY="optional"
 PKG_SECTION="tools"
 PKG_SHORTDESC="bcm2835-bootloader: Tool to create a bootable kernel for RaspberryPi"
 PKG_LONGDESC="bcm2835-bootloader: Tool to create a bootable kernel for RaspberryPi"
@@ -48,7 +46,13 @@ makeinstall_target() {
     [ -f dt-blob.bin ] && cp -PRv dt-blob.bin $INSTALL/usr/share/bootloader/dt-blob.bin
 
     cp -PRv $PKG_DIR/scripts/update.sh $INSTALL/usr/share/bootloader
-    
+
+    if [ -f $DISTRO_DIR/$DISTRO/config/distroconfig.txt ]; then
+      cp -PRv $DISTRO_DIR/$DISTRO/config/distroconfig.txt $INSTALL/usr/share/bootloader
+    else
+      cp -PRv $PKG_DIR/files/3rdparty/bootloader/distroconfig.txt $INSTALL/usr/share/bootloader
+    fi
+
     if [ -f $DISTRO_DIR/$DISTRO/config/config.txt ]; then
       cp -PRv $DISTRO_DIR/$DISTRO/config/config.txt $INSTALL/usr/share/bootloader
     else

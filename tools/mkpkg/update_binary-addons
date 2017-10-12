@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ################################################################################
 #      This file is part of OpenELEC - http://www.openelec.tv
 #      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
@@ -22,13 +22,20 @@ if [ -z "$1" ]; then
   exit 0
 fi
 
-KODI_DIR="kodi-$1.git"
+KODI_BRANCH="$1"
+KODI_DIR="kodi-${KODI_BRANCH}.git"
 
 git_clone() {
   # git_clone https://repo.url branch ./target_dir [githash]
   echo "[mkpkg] Checking out $1 ..."
   if [ ! -d "$3" ]; then
-    git clone "$1" -b $2 "$3"
+    git clone "$1" "$3"
+    # Try to switch to specified branch if it exist, if not then use default branch
+    if [ -n "$2" ]; then
+      cd "$3"
+      git checkout $2 >/dev/null 2>/dev/null
+      cd ..
+    fi
   else
     if [ -d "$3" ] ; then
       cd "$3"
@@ -37,6 +44,7 @@ git_clone() {
       cd ..
     fi
   fi
+
   if [ ! -z "$4" ] ; then
     cd "$3"
     git fetch >/dev/null 2>/dev/null
@@ -52,6 +60,40 @@ resolve_hash() {
     cd "$1"
     git rev-parse --short $2 2>/dev/null
   fi
+}
+
+# Get url in git:// notation for a package.mk, assuming it is a github.com url
+# Return 1 if not a github domain
+geturl() {
+  local addon="$1"
+  local domain owner repo
+
+  . ../../packages/mediacenter/kodi-binary-addons/${addon}/package.mk 1>/dev/null 2>/dev/null
+
+  domain="$(echo "${PKG_URL}" | cut -d/ -f3)"
+  [ "${domain}" = "github.com" ] || return 1
+
+  owner="$(echo "${PKG_URL}" | cut -d/ -f4)"
+  repo="$(echo "${PKG_URL}" | cut -d/ -f5)"
+
+  echo "git://${domain}/${owner}/${repo}.git"
+  return 0
+}
+
+# For the specified addon, verify that the package url
+# matches the url retrieved from Kodi
+validate_pkg_url() {
+  local addon="$1" url1="$2"
+  local domain owner repo url2
+
+  domain="$(echo "${url1}" | cut -d/ -f3)"
+  owner="$(echo "${url1}" | cut -d/ -f4)"
+  repo="$(echo "${url1}" | cut -d/ -f5)"
+
+  url1="git://${domain}/${owner}/${repo}.git"
+  url2="$(geturl "${addon}")"
+
+  [ "${url1}" = "${url2}" ] && return 0 || return 1
 }
 
 if [ ! -d $KODI_DIR ] ; then
@@ -92,19 +134,25 @@ for addontxt in $KODI_DIR/project/cmake/addons/bootstrap/repositories/*-addons.t
   ADDONS=$(cat $addontxt | awk '{print $1}')
   ADDONREPO=$(cat $addontxt | awk '{print $2}')
   GIT_HASH=$(cat $addontxt | awk '{print $3}')
-  git_clone $ADDONREPO master $ADDONS.git $GIT_HASH
+  git_clone $ADDONREPO ${KODI_BRANCH} $ADDONS.git $GIT_HASH
   for addon in $ADDONS.git/*.*/ ; do
     ADDON=$(basename $addon)
     REPO=$(cat $addon/$ADDON.txt | awk '{print $2}')
     GIT_HASH=$(cat $addon/$ADDON.txt | awk '{print $3}')
     PKG_NAME="$ADDON"
 
+    # Verify the Kodi repo matches our package repo
+    # If different, ignore the addon and process it later as an "unofficial" addon
+    validate_pkg_url "$ADDON" "$REPO" || continue
+
+    PROCESSED="${PROCESSED}${PKG_NAME}\n"
+
     if ! grep -q all $addon/platforms.txt && ! grep -q linux $addon/platforms.txt && ! grep -q ! $addon/platforms.txt; then
       continue
     fi
 
     if [ -f ../../packages/mediacenter/kodi-binary-addons/$ADDON/package.mk ] ; then
-      git_clone $REPO master $PKG_NAME.git $GIT_HASH
+      git_clone $REPO ${KODI_BRANCH} $PKG_NAME.git $GIT_HASH
 
       # update package.mk
       RESOLVED_HASH=$(resolve_hash $PKG_NAME.git $GIT_HASH)
@@ -113,7 +161,6 @@ for addontxt in $KODI_DIR/project/cmake/addons/bootstrap/repositories/*-addons.t
           -i ../../packages/mediacenter/kodi-binary-addons/$ADDON/package.mk
 
       rm -rf $PKG_NAME.git
-
     else
       echo "[mkpkg] Skipped $ADDON"
       SKIPPED_ADDONS="$SKIPPED_ADDONS $ADDON"
@@ -121,4 +168,23 @@ for addontxt in $KODI_DIR/project/cmake/addons/bootstrap/repositories/*-addons.t
   done
   echo "followed addons was skipped, please add packages for this:"
   echo "$SKIPPED_ADDONS"
+done
+
+# finally, any other unofficial addons
+for ADDON in $(ls -1 ../../packages/mediacenter/kodi-binary-addons); do
+  # ignore already processed addons
+  echo -e "${PROCESSED}" | grep -qE "^${ADDON}$" && continue
+
+  # Obtain git url - ignore if not a suitable repo
+  REPO="$(geturl "${ADDON}")" || continue
+
+  git_clone $REPO ${KODI_BRANCH} $ADDON.git HEAD
+
+  # update package.mk for stale github.com packages
+  RESOLVED_HASH=$(resolve_hash ${ADDON}.git HEAD) || continue
+
+  sed -e "s|PKG_VERSION=.*|PKG_VERSION=\"$RESOLVED_HASH\"|g" \
+    -i ../../packages/mediacenter/kodi-binary-addons/$ADDON/package.mk
+
+  rm -rf $ADDON.git
 done

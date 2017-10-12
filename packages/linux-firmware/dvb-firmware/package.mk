@@ -17,14 +17,12 @@
 ################################################################################
 
 PKG_NAME="dvb-firmware"
-PKG_VERSION="1.0.0"
-PKG_REV="1"
+PKG_VERSION="1.2.1"
 PKG_ARCH="any"
 PKG_LICENSE="Free-to-use"
 PKG_SITE="https://github.com/LibreELEC/dvb-firmware"
 PKG_URL="https://github.com/LibreELEC/dvb-firmware/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_PRIORITY="optional"
 PKG_SECTION="firmware"
 PKG_SHORTDESC="dvb-firmware: firmwares for various DVB drivers"
 PKG_LONGDESC="dvb-firmware: firmwares for various DVB drivers"
@@ -37,5 +35,5 @@ make_target() {
 }
 
 makeinstall_target() {
-  DESTDIR=$INSTALL ./install
+  DESTDIR=$INSTALL/usr ./install
 }

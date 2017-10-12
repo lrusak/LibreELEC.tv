@@ -17,21 +17,19 @@
 ################################################################################
 
 PKG_NAME="xproto"
-PKG_VERSION="7.0.28"
-PKG_REV="1"
+PKG_VERSION="7.0.31"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.x.org/"
 PKG_URL="http://xorg.freedesktop.org/archive/individual/proto/$PKG_NAME-$PKG_VERSION.tar.bz2"
 PKG_DEPENDS_HOST="util-macros"
 PKG_DEPENDS_TARGET="toolchain util-macros"
-PKG_PRIORITY="optional"
 PKG_SECTION="x11/proto"
 PKG_SHORTDESC="xproto: KB extension headers"
 PKG_LONGDESC="X11 extension headers"
 
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="yes"
+PKG_AUTORECONF="no"
 
 # package specific configure options
 PKG_CONFIGURE_OPTS_TARGET="--without-xmlto"

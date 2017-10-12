@@ -18,13 +18,11 @@
 
 PKG_NAME="libprojectM"
 PKG_VERSION="2.0.0"
-PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://projectm.sourceforge.net/"
 PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain ftgl freetype $OPENGL"
-PKG_PRIORITY="optional"
 PKG_SECTION="multimedia"
 PKG_SHORTDESC="libprojectM:"
 PKG_LONGDESC="libprojectM:"
@@ -32,10 +30,4 @@ PKG_LONGDESC="libprojectM:"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-configure_target() {
-  cmake -DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF \
-        -DCMAKE_INSTALL_PREFIX=/usr \
-        -DCMAKE_PREFIX_PATH=$SYSROOT_PREFIX/usr \
-        -DBUILD_PROJECTM_STATIC=1 \
-        ..
-}
+PKG_CMAKE_OPTS_TARGET="-DBUILD_PROJECTM_STATIC=1"
