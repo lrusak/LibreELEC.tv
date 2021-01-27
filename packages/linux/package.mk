@@ -176,6 +176,18 @@ pre_make_target() {
     sed -i -e "/CONFIG_EXTRA_FIRMWARE_DIR/d" -e "/CONFIG_EXTRA_FIRMWARE=.../a CONFIG_EXTRA_FIRMWARE_DIR=\"external-firmware\"" $PKG_BUILD/.config
   fi
 
+  while read OPTION; do
+    [ -z "$OPTION" -o -n "$(echo "$OPTION" | grep '^#')" ] && continue
+
+    if [ "$($PKG_BUILD/scripts/config --state $OPTION)" != "y" ]; then
+      MISSING_OPTIONS+="$OPTION "
+    fi
+  done < $PKG_DIR/config/required_options
+
+  if [ -n "$MISSING_OPTIONS" ]; then
+    die "linux: required kernel options not built-in: \"${MISSING_OPTIONS%%[[:space:]]}\""
+  fi
+
   kernel_make oldconfig
 }
 
