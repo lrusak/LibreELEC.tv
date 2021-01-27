@@ -177,6 +177,38 @@ pre_make_target() {
   fi
 
   kernel_make oldconfig
+
+  if [ -f "${DISTRO_DIR}/${DISTRO}/required_kernel_options" ]; then
+    while read OPTION; do
+      [ -z "$OPTION" -o -n "$(echo "$OPTION" | grep '^#')" ] && continue
+
+      if [ "${OPTION##*=}" == "n" -a "$($PKG_BUILD/scripts/config --state ${OPTION%%=*})" == "undef" ]; then
+        continue
+      fi
+
+      if [ "$($PKG_BUILD/scripts/config --state ${OPTION%%=*})" != "${OPTION##*=}" ]; then
+        MISSING_REQUIRED_OPTIONS+="\t$OPTION\n"
+      fi
+    done < ${DISTRO_DIR}/${DISTRO}/required_kernel_options
+
+    if [ -n "$MISSING_REQUIRED_OPTIONS" ]; then
+      print_color CLR_WARNING "LINUX: required kernel options not correct: \n${MISSING_REQUIRED_OPTIONS%%}\nPlease run ./scripts/check_kernel_config\n"
+    fi
+  fi
+
+  if [ -f "${DISTRO_DIR}/${DISTRO}/optional_kernel_options" ]; then
+    while read OPTION; do
+      [ -z "$OPTION" -o -n "$(echo "$OPTION" | grep '^#')" ] && continue
+
+      if [ "$($PKG_BUILD/scripts/config --state ${OPTION%%=*})" != "${OPTION##*=}" ]; then
+        MISSING_OPTIONAL_OPTIONS+="\t$OPTION\n"
+      fi
+    done < ${DISTRO_DIR}/${DISTRO}/optional_kernel_options
+
+    if [ -n "$MISSING_OPTIONAL_OPTIONS" ]; then
+      print_color CLR_WARNING_DIM "LINUX: optional kernel options not correct: \n${MISSING_OPTIONAL_OPTIONS%%}\nPlease run ./scripts/check_kernel_config\n"
+    fi
+  fi
 }
 
 make_target() {
