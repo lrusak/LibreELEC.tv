@@ -40,6 +40,7 @@ touch projects/${PROJECT}/linux/linux.aarch64.conf
 
 # we want to trap our own exit signals so we can cleanup temp dirs
 NOONEXIT="yes"
+DISABLE_HOST_OPTIMIZATION="yes"
 . config/options ""
 
 # set toolchain name and version
@@ -75,6 +76,13 @@ cp -a ${TOOLCHAIN} ${TOOLCHAIN_STAGING_DIRECTORY}/${TOOLCHAIN_NAME}
 cat << EOF > ${TOOLCHAIN_VERSION_FILE}
 Toolchain name: ${TOOLCHAIN_NAME}
 Toolchain version: ${TOOLCHAIN_VERSION}
+
+Toolchain flags:
+===========================================================
+CPPFLAGS: ${HOST_CPPFLAGS}
+CFLAGS:   ${HOST_CFLAGS}
+CXXFLAGS: ${HOST_CXXFLAGS}
+LDFLAGS:  ${HOST_LDFLAGS}
 
 Package versions:
 ===========================================================
