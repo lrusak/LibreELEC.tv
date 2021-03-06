@@ -32,120 +32,226 @@ CONFIG_PKCS8_PRIVATE_KEY_PARSER=m
 CONFIG_HID=y
 CONFIG_HID_BATTERY_STRENGTH=y
 CONFIG_HIDRAW=y
-CONFIG_UHID=m
+CONFIG_UHID=n
 CONFIG_HID_GENERIC=y
 
 #
 # Special HID drivers
 #
-CONFIG_HID_A4TECH=m
+# mouse -> include in config
+CONFIG_HID_A4TECH=y
+# touchscreen -> meh
 CONFIG_HID_ACCUTOUCH=m
+# game controller -> meh
 CONFIG_HID_ACRUX=m
 CONFIG_HID_ACRUX_FF=y
-CONFIG_HID_APPLE=m
+# keyboard -> include in config
+CONFIG_HID_APPLE=y
+# IR driver -> meh
 CONFIG_HID_APPLEIR=m
+# special keyboard -> meh
 CONFIG_HID_ASUS=m
+# special remote -> meh
 CONFIG_HID_AUREAL=m
-CONFIG_HID_BELKIN=m
+# keyboard -> include
+CONFIG_HID_BELKIN=y
+# force feedback -> meh
 CONFIG_HID_BETOP_FF=m
+# force feedback -> meh
 CONFIG_HID_BIGBEN_FF=m
+# keyboard -> include
 CONFIG_HID_CHERRY=m
+# special pad -> meh
 CONFIG_HID_CHICONY=m
-CONFIG_HID_CORSAIR=m
-CONFIG_HID_COUGAR=m
-CONFIG_HID_MACALLY=m
-CONFIG_HID_PRODIKEYS=m
-CONFIG_HID_CMEDIA=m
-CONFIG_HID_CP2112=m
+# keyboard -> include in config
+CONFIG_HID_CORSAIR=y
+# keyboard -> include in config
+CONFIG_HID_COUGAR=y
+# keyboard -> include in config
+CONFIG_HID_MACALLY=y
+# special midi keyboard -> no
+CONFIG_HID_PRODIKEYS=n
+# audio jack? -> no
+CONFIG_HID_CMEDIA=n
+# usb-to-serial -> no
+CONFIG_HID_CP2112=n
+# special remote -> meh
 CONFIG_HID_CREATIVE_SB0540=m
-CONFIG_HID_CYPRESS=m
+# barcode reader? -> n
+CONFIG_HID_CYPRESS=n
+# game controller -> meh
 CONFIG_HID_DRAGONRISE=m
+# ff for ^ controller -> sure
 CONFIG_DRAGONRISE_FF=y
-CONFIG_HID_EMS_FF=m
-CONFIG_HID_ELAN=m
+# force feedback device -> no
+CONFIG_HID_EMS_FF=n
+# touchpad -> no
+CONFIG_HID_ELAN=n
+# special mouse and trackballs > meh
 CONFIG_HID_ELECOM=m
+# touchscreen -> meh
 CONFIG_HID_ELO=m
-CONFIG_HID_EZKEY=m
+# keyboard -> sure
+CONFIG_HID_EZKEY=y
+# joystick -> meh
 CONFIG_HID_GEMBIRD=m
+# special remote -> meh
 CONFIG_HID_GFRM=m
+# gaming mice? -> meh
 CONFIG_HID_GLORIOUS=m
+# gaming cruft -> meh
 CONFIG_HID_HOLTEK=m
+# force feedback for ^ meh
 CONFIG_HOLTEK_FF=y
-CONFIG_HID_GT683R=m
-CONFIG_HID_KEYTOUCH=m
-CONFIG_HID_KYE=m
-CONFIG_HID_UCLOGIC=m
-CONFIG_HID_WALTOP=m
-CONFIG_HID_VIEWSONIC=m
+# keyboard -> sure
+CONFIG_HID_VIVALDI=y
+# leds? -> no
+CONFIG_HID_GT683R=n
+# not sure -> no
+CONFIG_HID_KEYTOUCH=n
+# tablet -> no
+CONFIG_HID_KYE=n
+# tablet -> no
+CONFIG_HID_UCLOGIC=n
+# tablet -> no
+CONFIG_HID_WALTOP=n
+# tablet -> no
+CONFIG_HID_VIEWSONIC=n
+# special remote -> meh
 CONFIG_HID_GYRATION=m
+# arcade controller -> meh
 CONFIG_HID_ICADE=m
-CONFIG_HID_ITE=m
-CONFIG_HID_JABRA=m
+# no idea -> no
+CONFIG_HID_ITE=n
+# no
+CONFIG_HID_JABRA=n
+# special remote -> meh
 CONFIG_HID_TWINHAN=m
+# special mouse? -> meh
 CONFIG_HID_KENSINGTON=m
+# special remote -> meh
 CONFIG_HID_LCPOWER=m
-CONFIG_HID_LED=m
-CONFIG_HID_LENOVO=m
+# no
+CONFIG_HID_LED=n
+# special keyboard -> ok
+CONFIG_HID_LENOVO=y
+# meh
 CONFIG_HID_LOGITECH=m
+# some special duplex thingamajig -> meh
 CONFIG_HID_LOGITECH_DJ=m
+# special touch pad -> meh
 CONFIG_HID_LOGITECH_HIDPP=m
+# force feedback for controller -> ok
 CONFIG_LOGITECH_FF=y
+# force feedback for controller -> ok
 CONFIG_LOGIRUMBLEPAD2_FF=y
-CONFIG_LOGIG940_FF=y
-CONFIG_LOGIWHEELS_FF=y
+# flight system ff -> nah
+CONFIG_LOGIG940_FF=n
+# racing wheel ff -> nah
+CONFIG_LOGIWHEELS_FF=n
+# mouse -> ok
 CONFIG_HID_MAGICMOUSE=y
+# special keyboard -> meh
 CONFIG_HID_MALTRON=m
+# game controller -> meh
 CONFIG_HID_MAYFLASH=m
-CONFIG_HID_REDRAGON=n
+# special keyboard -> meh
+CONFIG_HID_REDRAGON=m
+# special devices? -> meh
 CONFIG_HID_MICROSOFT=m
+# special keyboard -> meh
 CONFIG_HID_MONTEREY=m
+# multitouch panels -> meh
 CONFIG_HID_MULTITOUCH=m
-CONFIG_HID_NTI=m
-CONFIG_HID_NTRIG=y
+# special crap -> n
+CONFIG_HID_NTI=n
+# touchscreen -> meh
+CONFIG_HID_NTRIG=m
+# special keyboard -> meh
 CONFIG_HID_ORTEK=m
+# game controller -> meh
+CONFIG_HID_OUYA=m
+# game controller -> meh
 CONFIG_HID_PANTHERLORD=m
+# ff for ^ -> ok
 CONFIG_PANTHERLORD_FF=y
-CONFIG_HID_PENMOUNT=m
+# special touch -> no
+CONFIG_HID_PENMOUNT=n
+# special remote -> meh
 CONFIG_HID_PETALYNX=m
-CONFIG_HID_PICOLCD=m
-CONFIG_HID_PICOLCD_FB=y
-CONFIG_HID_PICOLCD_BACKLIGHT=y
-CONFIG_HID_PICOLCD_LCD=y
-CONFIG_HID_PICOLCD_LEDS=y
-CONFIG_HID_PICOLCD_CIR=y
-CONFIG_HID_PLANTRONICS=m
-CONFIG_HID_PRIMAX=m
+# special lcd -> n
+CONFIG_HID_PICOLCD=n
+CONFIG_HID_PICOLCD_FB=n
+CONFIG_HID_PICOLCD_BACKLIGHT=n
+CONFIG_HID_PICOLCD_LCD=n
+CONFIG_HID_PICOLCD_LEDS=n
+CONFIG_HID_PICOLCD_CIR=n
+# special headset? -> no
+CONFIG_HID_PLANTRONICS=n
+# no idea -> no
+CONFIG_HID_PRIMAX=n
+# game controller -> meh
 CONFIG_HID_RETRODE=m
+# game controller -> meh
 CONFIG_HID_ROCCAT=m
+# game controller -> meh
 CONFIG_HID_SAITEK=m
+# special remote
 CONFIG_HID_SAMSUNG=m
+# game controller -> meh
 CONFIG_HID_SONY=m
+# ff for ^
 CONFIG_SONY_FF=y
-CONFIG_HID_SPEEDLINK=m
+# special mouse? -> no
+CONFIG_HID_SPEEDLINK=n
+# steam controller -> meh
 CONFIG_HID_STEAM=m
+# steering wheel? meh
 CONFIG_HID_STEELSERIES=m
-CONFIG_HID_SUNPLUS=m
+# no idea -> no
+CONFIG_HID_SUNPLUS=n
+# touchpad -> meh
 CONFIG_HID_RMI=m
+# game controller -> meh
 CONFIG_HID_GREENASIA=m
+# ff for ^
 CONFIG_GREENASIA_FF=y
-CONFIG_HID_HYPERV_MOUSE=m
+# game controller -> meh
 CONFIG_HID_SMARTJOYPLUS=m
+# ff for ^
 CONFIG_SMARTJOYPLUS_FF=y
+# bluetooth remote -> meh
 CONFIG_HID_TIVO=m
+# special remote -> meh
 CONFIG_HID_TOPSEED=m
-CONFIG_HID_THINGM=m
+# no
+CONFIG_HID_THINGM=n
+# steering wheel? -> meh
 CONFIG_HID_THRUSTMASTER=m
+# ff for ^
 CONFIG_THRUSTMASTER_FF=y
-CONFIG_HID_UDRAW_PS3=m
-CONFIG_HID_U2FZERO=m
-CONFIG_HID_WACOM=m
+# gaming tablet? -> no
+CONFIG_HID_UDRAW_PS3=n
+# U2F device -> no
+CONFIG_HID_U2FZERO=n
+# table? -> no
+CONFIG_HID_WACOM=n
+# special remote -> meh
 CONFIG_HID_WIIMOTE=m
+# arcade device -> meh
 CONFIG_HID_XINMO=m
+# game controller -> meh
 CONFIG_HID_ZEROPLUS=m
+# ff for ^
 CONFIG_ZEROPLUS_FF=y
+# special remote -> meh
 CONFIG_HID_ZYDACRON=m
-CONFIG_HID_SENSOR_HUB=m
+# no
+CONFIG_HID_SENSOR_HUB=n
+# no
 CONFIG_HID_SENSOR_CUSTOM_SENSOR=n
-CONFIG_HID_ALPS=m
-CONFIG_HID_MCP2221=m
+# special touchpad -> no
+CONFIG_HID_ALPS=n
+# special device -> no
+CONFIG_HID_MCP2221=n
 # end of Special HID drivers
